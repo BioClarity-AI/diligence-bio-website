@@ -1,0 +1,82 @@
+---
+import Base from './Base.astro';
+import SiteNav from '../components/SiteNav.astro';
+
+/**
+ * Holding page for a route the navigation already points at.
+ *
+ * These are `noindex` on purpose: a thin page that ranks is worse than no page
+ * at all, and the route exists only so the nav never 404s. Drop the `noindex`
+ * prop the moment the page carries real content.
+ */
+export interface Props {
+  title: string;
+  description: string;
+  heading: string;
+  noindex?: boolean;
+}
+
+const { title, description, heading, noindex = true } = Astro.props;
+---
+
+<Base title={title} description={description} noindex={noindex}>
+  <div class="shell">
+    <SiteNav />
+    <main class="body">
+      <p class="eyebrow">DiligenceBio</p>
+      <h1>{heading}</h1>
+      <div class="prose"><slot /></div>
+      <p class="back"><a href="/">← Back to the landing page</a></p>
+    </main>
+  </div>
+</Base>
+
+<style>
+  .shell {
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    background: var(--color-bg);
+    color: var(--color-text);
+  }
+
+  .body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    max-width: 62ch;
+    padding: 64px 44px;
+  }
+
+  .eyebrow {
+    margin: 0 0 14px;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-neutral-600);
+  }
+
+  h1 {
+    font-size: clamp(30px, 3vw, 44px);
+    line-height: 1.05;
+    margin: 0 0 20px;
+  }
+
+  .prose {
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--color-neutral-800);
+  }
+
+  .back {
+    margin-top: 40px;
+    font-size: 14px;
+  }
+
+  @media (max-width: 700px) {
+    .body {
+      padding: 48px 20px;
+    }
+  }
+</style>

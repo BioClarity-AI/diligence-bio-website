@@ -1,0 +1,119 @@
+---
+import PageShell from '../layouts/PageShell.astro';
+
+const title = 'Request access — DiligenceBio';
+const description =
+  'Access to the DiligenceBio platform is granted case by case during early development. Tell us who you are and what you would validate.';
+
+const mailto = 'mailto:info@diligencebio.ai?subject=Request%20access';
+---
+
+<PageShell title={title} description={description}>
+  <Fragment slot="copy">
+    <p class="eyebrow">
+      <span class="pulse" aria-hidden="true"></span>
+      Early access
+    </p>
+
+    <h1>Tell Us What You Would Validate</h1>
+
+    <div class="lede">
+      <p>
+        Access is granted case by case while the platform is in early development. Email us
+        with who you are and what you would validate, and we will get back to you.
+      </p>
+      <p><a href={mailto}>info@diligencebio.ai</a></p>
+    </div>
+
+    <div class="actions">
+      <a class="btn btn-primary" href={mailto}>Email us →</a>
+    </div>
+  </Fragment>
+
+  <Fragment slot="stage">
+    <canvas data-canvas aria-hidden="true"></canvas>
+  </Fragment>
+</PageShell>
+
+<script>
+  import { initRequestAccess } from '../scripts/requestAccess';
+  import { loadSettings } from '../scripts/settings';
+
+  const stage = document.querySelector<HTMLElement>('[data-page-stage]');
+  if (stage) {
+    const panel = initRequestAccess(stage);
+    loadSettings().then(({ requestAccess }) => {
+      if (requestAccess) panel.update(requestAccess);
+    });
+  }
+</script>
+
+<style>
+  canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 22px;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-neutral-700);
+  }
+
+  .pulse {
+    width: 8px;
+    height: 8px;
+    flex: none;
+    background: var(--color-accent);
+    animation: bc-pulse 2.4s ease-in-out infinite;
+  }
+
+  h1 {
+    font-size: clamp(34px, 3.6vw, 56px);
+    line-height: 1.02;
+    letter-spacing: -0.025em;
+    margin: 0 0 22px;
+    max-width: 15ch;
+  }
+
+  .lede {
+    font-size: 17px;
+    line-height: 1.55;
+    color: var(--color-neutral-800);
+    max-width: 46ch;
+    margin: 0 0 32px;
+  }
+
+  .lede p {
+    margin: 0 0 14px;
+  }
+
+  .lede p:last-child {
+    margin: 0;
+  }
+
+  .actions {
+    display: flex;
+    gap: 12px;
+  }
+
+  .actions .btn {
+    padding: 14px 20px;
+    font-size: 15px;
+    white-space: nowrap;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pulse {
+      animation: none;
+    }
+  }
+</style>

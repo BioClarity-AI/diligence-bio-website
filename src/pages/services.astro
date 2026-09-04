@@ -1,0 +1,45 @@
+---
+import IndexPage from '../layouts/IndexPage.astro';
+import type { Card } from '../components/IndexCards.astro';
+
+const cards: Card[] = [
+  {
+    href: '/services/adoption-strategy',
+    index: '01',
+    title: 'AI Adoption Strategy',
+    blurb: 'Identify where AI can create measurable value.',
+    cta: 'See the service',
+  },
+  {
+    href: '/services/validation-benchmarking',
+    index: '02',
+    title: 'Validation & Benchmarking',
+    blurb: 'Prove what works for your science.',
+    cta: 'See the service',
+  },
+  {
+    href: '/services/ai-data-products',
+    index: '03',
+    title: 'AI & Data Products',
+    blurb: 'Build around your data, workflows, and portfolio.',
+    cta: 'See the service',
+  },
+  {
+    href: '/services/portfolio-intelligence',
+    index: '04',
+    title: 'Portfolio Intelligence',
+    blurb: 'Turn complex evidence into better R&D decisions.',
+    cta: 'See the service',
+  },
+];
+---
+
+<IndexPage
+  title="Services — DiligenceBio"
+  description="Four services scoped to your portfolio: AI adoption strategy, validation and benchmarking, AI and data products, and portfolio intelligence. Vendor agnostic, built around your science."
+  eyebrow="How we engage"
+  heading="Built Around Your Science"
+  lede="No platform agenda. No preferred vendor. Four services, scoped to what your portfolio needs."
+  cards={cards}
+  rows={2}
+/>

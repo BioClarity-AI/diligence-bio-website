@@ -1,0 +1,264 @@
+---
+/**
+ * "Who we are" plus two numbered sections — operating leadership and the
+ * roles being hired for — identical on the Company page and on each
+ * open-role page, where it sits opposite the role's own copy instead of the
+ * canvas stage.
+ */
+export interface Props {
+  /** Demotes the heading to h2 so a role page keeps its own topic as the h1. */
+  compact?: boolean;
+}
+
+const { compact = false } = Astro.props;
+const Heading = compact ? 'h2' : 'h1';
+---
+
+<p class="eyebrow">
+  <span class="pulse" aria-hidden="true"></span>
+  Who we are
+</p>
+
+<Heading class="heading">Built For The Adoption Gap</Heading>
+
+<p class="lede">
+  DiligenceBio is the independent trust and validation layer between AI builders and biopharma
+  R&amp;D. We help pharma and biotech determine what works, what generalizes, and what is ready to
+  inform scientific decisions.
+</p>
+
+<section class="people">
+  <h2 class="section-head"><span class="section-num">01</span> Operating Leadership</h2>
+
+  <ul>
+    <li>
+      <img src="/images/Ayan.jpg" alt="Dr. Ayan Chatterjee" width="76" height="76" />
+      <div>
+        <p class="name">Dr. Ayan Chatterjee</p>
+        <p class="role">Interim Chief Executive Officer &amp; Chief Scientific Officer, AI</p>
+      </div>
+    </li>
+
+    <li>
+      <img src="/images/Smitha.jpg" alt="Smitha Narendra" width="76" height="76" />
+      <div>
+        <p class="name">Smitha Narendra</p>
+        <p class="role">Chief Operating Officer</p>
+      </div>
+    </li>
+  </ul>
+</section>
+
+<section class="people">
+  <h2 class="section-head"><span class="section-num">02</span> Leadership We’re Building</h2>
+
+  <ul>
+    <li class="open-role">
+      <a class="role-link" href="/company/ceo">
+        <span class="vacancy" aria-hidden="true">+</span>
+        <div>
+          <p class="name">Permanent Chief Executive Officer</p>
+          <p class="status">
+            <span class="dot" aria-hidden="true"></span>
+            Planned full-time hire →
+          </p>
+          <p class="blurb">
+            We are recruiting a full-time CEO with enterprise biopharma and AI commercialization
+            experience to lead DiligenceBio through its next stage of growth.
+          </p>
+        </div>
+      </a>
+    </li>
+
+    <li class="open-role">
+      <a class="role-link" href="/company/cso-biology">
+        <span class="vacancy" aria-hidden="true">+</span>
+        <div>
+          <p class="name">Chief Scientific Officer, Biology</p>
+          <p class="status">
+            <span class="dot" aria-hidden="true"></span>
+            Planned full-time hire →
+          </p>
+        </div>
+      </a>
+    </li>
+  </ul>
+</section>
+
+<style>
+  .eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 22px;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-neutral-700);
+  }
+
+  .pulse {
+    width: 8px;
+    height: 8px;
+    flex: none;
+    background: var(--color-accent);
+    animation: bc-pulse 2.4s ease-in-out infinite;
+  }
+
+  .heading {
+    font-size: clamp(34px, 3.6vw, 56px);
+    line-height: 1.02;
+    letter-spacing: -0.025em;
+    margin: 0 0 22px;
+    max-width: 15ch;
+  }
+
+  .lede {
+    font-size: 17px;
+    line-height: 1.55;
+    color: var(--color-neutral-800);
+    max-width: 46ch;
+    margin: 0 0 32px;
+  }
+
+  .people {
+    border-top: 2px solid var(--color-divider);
+    padding-top: 22px;
+  }
+
+  .people + .people {
+    margin-top: 32px;
+  }
+
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-neutral-700);
+    margin: 0 0 20px;
+  }
+
+  .section-num {
+    color: var(--color-accent);
+  }
+
+  .people ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 46ch;
+  }
+
+  .people li {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  /* The blurb under a planned hire pushes the row taller than a photo row, so
+     the icon aligns to the top of the name rather than the row's centre. */
+  .open-role {
+    align-items: flex-start;
+  }
+
+  .open-role .vacancy {
+    margin-top: -6px;
+  }
+
+  /* The whole row is the link; display: contents drops the anchor's own box
+     so its children lay out as direct flex items of the li, matching the
+     photo rows exactly. :hover still tracks the pointer over those children. */
+  .role-link {
+    display: contents;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .role-link:hover {
+    color: var(--color-accent);
+  }
+
+  .people img {
+    flex: none;
+    width: 76px;
+    height: 76px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: var(--color-neutral-100);
+    /* Photographs are the only images on the site; desaturating them keeps the
+       page to its two-colour palette. */
+    filter: grayscale(1) contrast(1.04);
+  }
+
+  .vacancy {
+    flex: none;
+    width: 76px;
+    height: 76px;
+    border: 2px dashed var(--color-neutral-400);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-neutral-500);
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: 22px;
+    line-height: 1;
+  }
+
+  .name {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: 17px;
+    line-height: 1.15;
+    letter-spacing: -0.015em;
+    margin: 0;
+  }
+
+  .role {
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--color-neutral-700);
+    margin: 4px 0 0;
+  }
+
+  .status {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin: 5px 0 0;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-accent-700);
+  }
+
+  .status .dot {
+    width: 6px;
+    height: 6px;
+    flex: none;
+    background: var(--color-accent);
+  }
+
+  .blurb {
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--color-neutral-700);
+    margin: 8px 0 0;
+    text-wrap: pretty;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pulse {
+      animation: none;
+    }
+  }
+</style>

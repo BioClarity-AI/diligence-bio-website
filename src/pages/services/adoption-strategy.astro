@@ -1,0 +1,49 @@
+---
+import DetailPage from '../../layouts/DetailPage.astro';
+import SceneStage from '../../components/SceneStage.astro';
+
+const prev = { href: '/services/portfolio-intelligence', label: 'Portfolio Intelligence' };
+const next = { href: '/services/validation-benchmarking', label: 'Validation & Benchmarking' };
+---
+
+<DetailPage
+  title="AI Adoption Strategy — DiligenceBio"
+  description="Adopt AI where it can change scientific decisions, not simply increase AI usage. We identify where AI creates measurable value and manage adoption around your operating model."
+  parent={{ href: '/services', label: 'Services' }}
+  index="01"
+  heading="AI Adoption Strategy"
+  claim="Adopt AI where it can change scientific decisions—not simply increase AI usage."
+  prev={prev}
+  next={next}
+>
+  <p>Identify where AI can create measurable value.</p>
+  <p>
+    AI is changing not only what R&D teams can do, but how they work, collaborate, and make
+    decisions. We identify where AI can create measurable value, reshape workflows around those
+    opportunities, and manage adoption in a way that fits your culture, operating model, and
+    scientific objectives.
+  </p>
+
+  <Fragment slot="stage">
+    <SceneStage
+      kicker="Service 01 — live"
+      title="AI ADOPTION STRATEGY"
+      prev={prev}
+      next={next}
+    />
+  </Fragment>
+</DetailPage>
+
+<script>
+  import { initSceneStage } from '../../scripts/sceneStage';
+  import { adoptionScene, SERVICES_LAYOUT } from '../../scripts/services';
+  import { loadSettings } from '../../scripts/settings';
+
+  const stage = document.querySelector<HTMLElement>('[data-page-stage]');
+  if (stage) {
+    const panel = initSceneStage(stage, { scene: adoptionScene(), ...SERVICES_LAYOUT });
+    loadSettings().then(({ services }) => {
+      if (services) panel.update({ speed: services.speed, mono: services.mono });
+    });
+  }
+</script>

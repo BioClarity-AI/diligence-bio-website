@@ -1,0 +1,124 @@
+---
+import Base from './Base.astro';
+import SiteNav from '../components/SiteNav.astro';
+import IndexCards, { type Card } from '../components/IndexCards.astro';
+
+/**
+ * An index that hands off: a short hero, then a grid of cards, one per page it
+ * introduces.
+ *
+ * Unlike `PageShell`, there is no stage column — the cards fill the space a
+ * canvas would have taken, and each topic's scene lives on its own page. The
+ * grid is given the remaining height so the cards reach the foot of the
+ * viewport rather than stopping at their content.
+ */
+export interface Props {
+  title: string;
+  description: string;
+  eyebrow: string;
+  heading: string;
+  lede: string;
+  cards: Card[];
+  rows?: 1 | 2;
+  cols?: 2 | 3;
+}
+
+const { title, description, eyebrow, heading, lede, cards, rows = 1, cols = 2 } = Astro.props;
+---
+
+<Base title={title} description={description}>
+  <div class="shell">
+    <SiteNav />
+    <main class="body">
+      <div class="intro">
+        <p class="eyebrow">
+          <span class="pulse" aria-hidden="true"></span>
+          {eyebrow}
+        </p>
+        <h1>{heading}</h1>
+        <p class="lede">{lede}</p>
+      </div>
+
+      <IndexCards cards={cards} rows={rows} cols={cols} />
+    </main>
+  </div>
+</Base>
+
+<style>
+  .shell {
+    height: 100dvh;
+    min-height: 460px;
+    display: flex;
+    flex-direction: column;
+    background: var(--color-bg);
+    color: var(--color-text);
+    overflow: hidden;
+  }
+
+  .body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow-y: auto;
+  }
+
+  .intro {
+    padding: 22px clamp(20px, 3.4vw, 44px) 18px;
+    flex: none;
+  }
+
+  .eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 10px;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-neutral-700);
+  }
+
+  .pulse {
+    width: 8px;
+    height: 8px;
+    flex: none;
+    background: var(--color-accent);
+    animation: bc-pulse 2.4s ease-in-out infinite;
+  }
+
+  h1 {
+    font-size: clamp(24px, 2.4vw, 34px);
+    line-height: 1.04;
+    letter-spacing: -0.025em;
+    margin: 0 0 8px;
+    max-width: 24ch;
+  }
+
+  .lede {
+    font-size: 15px;
+    line-height: 1.45;
+    color: var(--color-neutral-800);
+    max-width: 68ch;
+    margin: 0;
+  }
+
+  /* Stacked, the cards each want their own height and the page scrolls
+     normally — a locked viewport would squeeze four of them into one screen. */
+  @media (max-width: 720px) {
+    .shell {
+      height: auto;
+      min-height: 100svh;
+      overflow: visible;
+    }
+    .body {
+      overflow: visible;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pulse {
+      animation: none;
+    }
+  }
+</style>

@@ -1,0 +1,190 @@
+---
+import PageShell from './PageShell.astro';
+
+/**
+ * One topic — a single service, or a single strand of the science.
+ *
+ * Six pages share this shape: a breadcrumb back to the index that lists them,
+ * a claim, the body copy, links to the neighbouring topics, and a stage on the
+ * right drawing that topic's scene. The stage itself is passed in through the
+ * `stage` slot so each page owns which scene it runs.
+ */
+export interface Props {
+  title: string;
+  description: string;
+  /** The index page this topic belongs to. */
+  parent: { href: string; label: string };
+  /** Position within that index, shown beside the breadcrumb: '01'…'04'. */
+  index: string;
+  heading: string;
+  /** The one-line argument, set in the heading face. */
+  claim: string;
+  /** Links to the neighbouring topics, shown under the copy. */
+  prev?: { href: string; label: string };
+  next?: { href: string; label: string };
+}
+
+const { title, description, parent, index, heading, claim, prev, next } = Astro.props;
+---
+
+<PageShell title={title} description={description} wide>
+  <Fragment slot="copy">
+    <p class="crumb">
+      <span class="pulse" aria-hidden="true"></span>
+      <a href={parent.href}>{parent.label}</a>
+      <span class="slash" aria-hidden="true">/</span>
+      <span class="index">{index}</span>
+    </p>
+
+    <h1>{heading}</h1>
+    <p class="claim">{claim}</p>
+
+    <div class="body">
+      <slot />
+    </div>
+
+    {
+      (prev || next) && (
+        <nav class="siblings" aria-label="Nearby pages">
+          {prev && <a href={prev.href}>← {prev.label}</a>}
+          {next && (
+            <a class="next" href={next.href}>
+              {next.label} →
+            </a>
+          )}
+        </nav>
+      )
+    }
+  </Fragment>
+
+  <Fragment slot="stage">
+    <slot name="stage" />
+  </Fragment>
+</PageShell>
+
+<style>
+  .crumb {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 22px;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .crumb a {
+    color: var(--color-neutral-700);
+    text-decoration: none;
+  }
+
+  .crumb a:hover {
+    color: var(--color-accent);
+  }
+
+  .slash {
+    color: var(--color-neutral-500);
+  }
+
+  .index {
+    color: var(--color-accent);
+  }
+
+  .pulse {
+    width: 8px;
+    height: 8px;
+    flex: none;
+    background: var(--color-accent);
+    animation: bc-pulse 2.4s ease-in-out infinite;
+  }
+
+  h1 {
+    font-size: clamp(30px, 3.2vw, 48px);
+    line-height: 1.02;
+    letter-spacing: -0.025em;
+    margin: 0 0 20px;
+    max-width: 17ch;
+  }
+
+  .claim {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: 18px;
+    line-height: 1.35;
+    margin: 0 0 20px;
+    max-width: 42ch;
+  }
+
+  .body {
+    border-top: 2px solid var(--color-divider);
+    padding-top: 22px;
+  }
+
+  /* Styling the slotted copy needs :global — scoped styles do not reach
+     through a <slot> to the markup the page passed in. */
+  .body :global(p) {
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--color-neutral-800);
+    margin: 0 0 14px;
+    max-width: 46ch;
+  }
+
+  .body :global(p:last-child) {
+    margin-bottom: 0;
+  }
+
+  /* An accent rule down the side: the quote is someone else's voice, marked
+     as a block rather than folded into the body copy around it. The 2px of
+     padding top and bottom keeps the rule a touch taller than the text it
+     sets off, so it reads as a bar and not as an underline turned sideways. */
+  .body :global(blockquote) {
+    margin: 20px 0 0;
+    padding: 2px 0 2px 20px;
+    border-left: 2px solid var(--color-accent);
+    max-width: 46ch;
+  }
+
+  .body :global(blockquote p) {
+    margin: 0;
+  }
+
+  .body :global(blockquote footer) {
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-neutral-600);
+    margin-top: 12px;
+  }
+
+  .siblings {
+    display: flex;
+    gap: 18px;
+    margin-top: 36px;
+    border-top: 2px solid var(--color-divider);
+    padding-top: 20px;
+  }
+
+  .siblings a {
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--color-neutral-700);
+  }
+
+  .siblings a:hover {
+    color: var(--color-accent);
+  }
+
+  .siblings .next {
+    margin-left: auto;
+    text-align: right;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pulse {
+      animation: none;
+    }
+  }
+</style>

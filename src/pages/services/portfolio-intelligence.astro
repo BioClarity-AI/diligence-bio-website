@@ -1,0 +1,43 @@
+---
+import DetailPage from '../../layouts/DetailPage.astro';
+import SceneStage from '../../components/SceneStage.astro';
+
+const prev = { href: '/services/ai-data-products', label: 'AI & Data Products' };
+const next = { href: '/services/adoption-strategy', label: 'AI Adoption Strategy' };
+---
+
+<DetailPage
+  title="Portfolio Intelligence — DiligenceBio"
+  description="Intelligence creates value only when it leads to a better next decision. Turn complex evidence into better R&D decisions across the portfolio."
+  parent={{ href: '/services', label: 'Services' }}
+  index="04"
+  heading="Portfolio Intelligence"
+  claim="Intelligence creates value only when it leads to a better next decision."
+  prev={prev}
+  next={next}
+>
+  <p>Turn complex evidence into better R&D decisions.</p>
+
+  <Fragment slot="stage">
+    <SceneStage
+      kicker="Service 04 — live"
+      title="PORTFOLIO INTELLIGENCE"
+      prev={prev}
+      next={next}
+    />
+  </Fragment>
+</DetailPage>
+
+<script>
+  import { initSceneStage } from '../../scripts/sceneStage';
+  import { portfolioScene, SERVICES_LAYOUT } from '../../scripts/services';
+  import { loadSettings } from '../../scripts/settings';
+
+  const stage = document.querySelector<HTMLElement>('[data-page-stage]');
+  if (stage) {
+    const panel = initSceneStage(stage, { scene: portfolioScene(), ...SERVICES_LAYOUT });
+    loadSettings().then(({ services }) => {
+      if (services) panel.update({ speed: services.speed, mono: services.mono });
+    });
+  }
+</script>

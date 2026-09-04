@@ -1,0 +1,47 @@
+---
+import DetailPage from '../../layouts/DetailPage.astro';
+import SceneStage from '../../components/SceneStage.astro';
+
+const prev = { href: '/science/platform', label: 'Platform' };
+---
+
+<DetailPage
+  title="Generalizability Measurements — DiligenceBio"
+  description="Assess whether frontier models learned the biology you need — not whether they fit the data they were given. Explainability and generalizability metrics for intelligent systems."
+  parent={{ href: '/science', label: 'Our science' }}
+  index="02"
+  heading="Generalizability Measurements"
+  claim="Assess whether frontier models learned the biology you need."
+  prev={prev}
+>
+  <p>A model can use biology without having learned it.</p>
+  <p>
+    Our science focuses on explainability and generalizability of intelligent systems, toward
+    decoding biological complex systems by distillation and encoding them to AI. Our science
+    similarly views AI as a complex system, and tests whether the AI actually learns biology.
+  </p>
+  <p>
+    Accuracy on a held-out split says a model fits the data it was given. Generalizability
+    metrics ask a different question: does the model carry an understanding that survives a new
+    target, a new assay, a new patient population — the conditions your next decision will
+    actually be made in.
+  </p>
+
+  <Fragment slot="stage">
+    <SceneStage kicker="Our science — live" title="GENERALIZABILITY" prev={prev} />
+  </Fragment>
+</DetailPage>
+
+<script>
+  import { initSceneStage } from '../../scripts/sceneStage';
+  import { frontierScene, SCIENCE_LAYOUT } from '../../scripts/science';
+  import { loadSettings } from '../../scripts/settings';
+
+  const stage = document.querySelector<HTMLElement>('[data-page-stage]');
+  if (stage) {
+    const panel = initSceneStage(stage, { scene: frontierScene(), ...SCIENCE_LAYOUT });
+    loadSettings().then(({ science }) => {
+      if (science) panel.update({ speed: science.speed, mono: science.mono });
+    });
+  }
+</script>

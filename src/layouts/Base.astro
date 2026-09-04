@@ -1,0 +1,205 @@
+---
+import '../styles/global.css';
+
+/**
+ * Every page's <head>. Astro renders this to static HTML at build time, so
+ * crawlers that do not execute JavaScript — Bing, LinkedIn, Slack, and the LLM
+ * crawlers — see the full page, not an empty root div.
+ */
+export interface Props {
+  title: string;
+  description: string;
+  /** Absolute or root-relative path to the social preview image. */
+  image?: string;
+  /** Set true on pages that should not be indexed (drafts, thank-you pages). */
+  noindex?: boolean;
+}
+
+const { title, description, image = '/images/og-default.png', noindex = false } = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const ogImage = new URL(image, Astro.site).href;
+
+// Organization schema is what search engines and AI assistants read to build a
+// knowledge panel or answer "what is DiligenceBio". Keep sameAs accurate —
+// wrong or dead profile links dilute entity matching.
+const organizationSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'DiligenceBio',
+  legalName: 'DiligenceBio Inc.',
+  url: 'https://diligencebio.ai',
+  logo: new URL('/images/logo.png', Astro.site).href,
+  description:
+    'DiligenceBio builds the trust and validation layer for AI-driven science, making an AI model’s understanding of living systems verifiable from molecule to organism.',
+  sameAs: [
+    // TODO: confirm these before launch — a dead sameAs link weakens entity matching.
+    // Still points at the old diligencebio-ai handle — update once a DiligenceBio
+    // LinkedIn page exists, or drop the entry until it does.
+    'https://www.linkedin.com/company/diligencebio-ai',
+  ],
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- The ground, inline and first. global.css is a render-blocking link, and
+         the html background lives inside it, so until it arrives the browser
+         paints its own white canvas — that is the flash between pages. This
+         paints the brand ground from the first byte instead.
+
+         The literal is deliberate: a var() cannot help here, because the file
+         that defines the token is the one being waited on. Keep it in step
+         with --color-bg in global.css. -->
+    <style is:inline>
+      html,
+      body {
+        background: #f3f2f2;
+      }
+    </style>
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="DiligenceBio" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <!-- The latin subset covers the visible copy; preloading it removes a
+         render-blocking round trip on the largest text (the h1). -->
+    <link
+      rel="preload"
+      href="/fonts/archivo-latin.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+
+    <!-- is:inline keeps this out of the JS bundle pipeline — it is data for
+         crawlers, not a script to execute. -->
+    <script
+      is:inline
+      type="application/ld+json"
+      set:html={JSON.stringify(organizationSchema)}
+    />
+
+    <!-- Page-to-page fades. Cross-document view transitions snapshot the new
+         page before its content has mounted, which reads as a flash, so the
+         fade is driven here instead: hide the body, reveal it once the page
+         content exists, fade out before following a link.
+
+         is:inline and in the head on purpose — a bundled module script is
+         deferred, so the browser would paint the page before this could hide
+         it and the fade would become a flicker. The 1.2s deadline in check()
+         is the safety net: the body reveals itself even if the content probe
+         never matches. -->
+    <script is:inline>
+      (function () {
+        if (window.__dbioPageFade) return;
+        window.__dbioPageFade = true;
+        var d = document;
+
+        var st = d.createElement('style');
+        st.textContent = 'body { opacity: 0; }';
+        (d.head || d.documentElement).appendChild(st);
+
+        function reveal() {
+          if (!d.body) return;
+          d.body.style.transition = 'opacity 0.3s ease';
+          d.body.style.opacity = '0';
+          st.remove();
+          requestAnimationFrame(function () {
+            requestAnimationFrame(function () {
+              d.body.style.opacity = '1';
+              setTimeout(function () {
+                d.body.style.transition = '';
+                d.body.style.opacity = '';
+              }, 400);
+            });
+          });
+        }
+
+        // The shell pages mount their copy column; 404 and any future plain
+        // page only have a <main>. Either counts as "there is content now".
+        var t0 = Date.now();
+        (function check() {
+          var ready = d.body && (d.querySelector('[data-page-copy], main') || Date.now() - t0 > 1200);
+          if (ready) reveal();
+          else setTimeout(check, 40);
+        })();
+
+        // Restored from bfcache: make sure nothing is left faded out.
+        window.addEventListener('pageshow', function (e) {
+          if (e.persisted && d.body) {
+            st.remove();
+            d.body.style.opacity = '1';
+            d.body.style.transition = '';
+          }
+        });
+
+        // The site builds to directories, so the address bar reads /services/
+        // while the links are written /services. Comparing the two raw would
+        // call a click on the page you are already on a navigation, and fade
+        // out for a reload of what is already on screen.
+        function samePath(a, b) {
+          return a.replace(/\/+$/, '') === b.replace(/\/+$/, '');
+        }
+
+        d.addEventListener(
+          'click',
+          function (e) {
+            if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+            var a = e.target && e.target.closest && e.target.closest('a[href]');
+            if (!a || a.target === '_blank' || a.hasAttribute('download')) return;
+            var href = a.getAttribute('href') || '';
+            if (/^(mailto:|tel:|#|javascript:)/i.test(href)) return;
+            var url;
+            try {
+              url = new URL(a.href, location.href);
+            } catch (err) {
+              return;
+            }
+            if (url.origin !== location.origin) return;
+            // Already on this page: the click is an in-page anchor, or a
+            // reload of what is already on screen. Neither wants a fade.
+            if (samePath(url.pathname, location.pathname)) return;
+            e.preventDefault();
+            if (d.body) {
+              d.body.style.transition = 'opacity 0.16s ease';
+              d.body.style.opacity = '0';
+            }
+            setTimeout(function () {
+              location.href = url.href;
+            }, 170);
+          },
+          true,
+        );
+      })();
+    </script>
+
+    <slot name="head" />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

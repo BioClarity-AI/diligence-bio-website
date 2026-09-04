@@ -1,0 +1,57 @@
+---
+import RolePage from '../../layouts/RolePage.astro';
+
+const own = [
+  {
+    label: 'Biological validation standards',
+    text: 'define the mechanisms, assays, endpoints, controls, and evidence required for an AI system to be considered scientifically decision-ready.',
+  },
+  {
+    label: 'Generalizability science',
+    text: 'determine whether models have learned transferable biology rather than correlations specific to their training data.',
+  },
+  {
+    label: 'Benchmark design',
+    text: 'work with our AI team to define hard negatives, inductive tests, biological controls, failure modes, and meaningful scientific thresholds.',
+  },
+  {
+    label: 'Scientific strategy',
+    text: 'determine which biological domains, modalities, and R&D decisions DiligenceBio should benchmark next.',
+  },
+  {
+    label: 'Customer science',
+    text: 'lead scientific review of engagements spanning target identification, indication selection, translational biology, PK/PD, and other high-value R&D decisions.',
+  },
+  {
+    label: 'Scientific leadership',
+    text: 'build our biology function and establish scientific governance as the company scales.',
+  },
+  {
+    label: 'External scientific voice',
+    text: 'lead publications, scientific partnerships, advisory relationships, and discussions with senior discovery and translational leaders.',
+  },
+];
+
+const lookingFor = [
+  'PhD, MD, or equivalent advanced training in a biological or translational discipline, with a record of influencing drug discovery or development decisions in industry.',
+  'Deep expertise in one or more of target biology, translational pharmacology, PK/PD, disease biology, or related areas.',
+  'Strong judgment around biological evidence, experimental design, causality, and generalizability.',
+  'Fluency working with computational scientists and AI teams—you do not need to build models, but you must know how to challenge their assumptions and conclusions.',
+  'Credibility with senior pharma scientists and the ability to translate complex evidence into actionable R&D decisions.',
+  'The independence to say the evidence is not there yet, even when a customer or model vendor wants a different answer.',
+];
+---
+
+<RolePage
+  title="Chief Scientific Officer, Biology — DiligenceBio"
+  description="DiligenceBio is looking for a Chief Scientific Officer, Biology to define the biological truth against which AI is measured — the scientific counterpart to our AI leadership."
+  heading="Chief Scientific Officer, Biology"
+  claim="Define the biological truth against which AI is measured."
+  intro={[
+    'You will be the scientific counterpart to our AI leadership: the person who determines what an AI system must understand about biology before a pharma team should rely on its output.',
+    'You will define the biological ground truth behind DiligenceBio’s measurement and benchmarking platform, establish standards for biological generalizability, and serve as a trusted scientific counterpart to discovery and translational leaders at our customers.',
+  ]}
+  own={own}
+  lookingFor={lookingFor}
+  location="Boston, MA — remote considered. Founding equity."
+/>

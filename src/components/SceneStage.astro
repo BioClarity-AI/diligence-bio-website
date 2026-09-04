@@ -1,0 +1,227 @@
+---
+/**
+ * The canvas and overlay for a page that carries a single scene.
+ *
+ * The sibling of `ScenePanel.astro`. Same decorative contract — the canvas is
+ * aria-hidden and every claim it draws is also written in the copy beside it —
+ * but the arrows here are real links to the neighbouring pages, not in-panel
+ * controls, so they work without JavaScript and a crawler can follow them.
+ */
+export interface SiblingLink {
+  href: string;
+  /** Accessible name and tooltip, e.g. "Validation & Benchmarking". */
+  label: string;
+}
+
+/** One competing build of the scene, offered as a lettered button. */
+export interface Variant {
+  id: string;
+  label: string;
+  title: string;
+}
+
+export interface Props {
+  /** Small caps line above the readout. */
+  kicker: string;
+  /** The scene's name, shown in the accent. */
+  title: string;
+  prev?: SiblingLink;
+  next?: SiblingLink;
+  /**
+   * Competing builds of this scene. Given two or more, the overlay offers a
+   * letter per build so they can be compared in place.
+   */
+  variants?: Variant[];
+}
+
+const { kicker, title, prev, next, variants = [] } = Astro.props;
+const hasPicker = variants.length > 1;
+---
+
+<canvas data-canvas aria-hidden="true"></canvas>
+
+<div class="overlay" data-overlay>
+  <p class="kicker">{kicker}</p>
+  <p class="readout">{title}</p>
+
+  <div class="controls">
+    {prev && <a class="arrow" href={prev.href} title={prev.label} aria-label={prev.label}>←</a>}
+    {next && <a class="arrow" href={next.href} title={next.label} aria-label={next.label}>→</a>}
+    {(prev || next) && <span class="sep" aria-hidden="true"></span>}
+
+    <button type="button" class="pause" data-pause title="Pause this animation" aria-pressed="false">
+      <span class="pause-dot" data-pause-dot aria-hidden="true"></span>
+      <span data-pause-label>Live</span>
+    </button>
+
+    {
+      hasPicker && (
+        <>
+          <span class="sep" aria-hidden="true" />
+          <span class="picker" role="group" aria-label="Scene concept">
+            {variants.map((v, i) => (
+              <button
+                type="button"
+                class:list={['variant', { 'is-on': i === 0 }]}
+                data-variant={i}
+                title={v.title}
+                aria-label={v.title}
+                aria-pressed={i === 0 ? 'true' : 'false'}
+              >
+                {v.id}
+              </button>
+            ))}
+          </span>
+          <span class="variant-name" data-variant-name>
+            {variants[0]?.label}
+          </span>
+        </>
+      )
+    }
+  </div>
+</div>
+
+<style>
+  canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .overlay {
+    position: absolute;
+    top: clamp(16px, 2.4vw, 28px);
+    left: clamp(16px, 2.6vw, 32px);
+    right: clamp(16px, 2.6vw, 32px);
+    /* The canvas below must stay reachable for the wheel forwarder; only the
+       controls themselves take pointer events. */
+    pointer-events: none;
+  }
+
+  .kicker {
+    margin: 0;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--color-neutral-600);
+  }
+
+  .readout {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: clamp(19px, 2.6vw, 30px);
+    letter-spacing: -0.01em;
+    line-height: 1;
+    margin: 6px 0 0;
+    color: var(--color-accent);
+  }
+
+  .controls {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 10px;
+    pointer-events: auto;
+    color: var(--color-neutral-600);
+    flex-wrap: wrap;
+  }
+
+  .arrow {
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .arrow:hover {
+    color: var(--color-accent);
+  }
+
+  .sep {
+    width: 1px;
+    height: 11px;
+    background: var(--color-divider);
+  }
+
+  .pause {
+    background: none;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: inherit;
+  }
+
+  .pause:hover,
+  .pause[aria-pressed='true'] {
+    color: var(--color-accent);
+  }
+
+  .pause-dot {
+    width: 5px;
+    height: 5px;
+    background: transparent;
+    border: 1px solid currentColor;
+  }
+
+  .pause-dot.is-on {
+    background: currentColor;
+  }
+
+  /* The letters cluster rather than sit in the controls row's 14px rhythm —
+     they are one control, not several. The design gets this by letting the
+     buttons inherit that 14px and pulling 8px back off it; grouping them in
+     their own flex box means setting the 6px difference directly instead. */
+  .picker {
+    display: inline-flex;
+    gap: 6px;
+  }
+
+  .variant {
+    width: 18px;
+    height: 18px;
+    padding: 0;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    line-height: 1;
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: 10px;
+    background: transparent;
+    color: var(--color-neutral-700);
+    border: 1px solid var(--color-divider);
+  }
+
+  .variant:hover {
+    border-color: var(--color-accent);
+  }
+
+  .variant.is-on {
+    background: var(--color-accent);
+    color: var(--color-neutral-100);
+    border-color: var(--color-accent);
+  }
+
+  .variant-name {
+    white-space: nowrap;
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-neutral-600);
+  }
+</style>

@@ -1,0 +1,41 @@
+---
+import PageShell from '../layouts/PageShell.astro';
+import CompanyIntro from '../components/CompanyIntro.astro';
+
+const title = 'Company — DiligenceBio';
+const description =
+  'DiligenceBio sits between the companies building agentic science and the pharma and biotech teams who have to act on what it produces — the trust and validation layer across AI-driven science.';
+---
+
+<PageShell title={title} description={description}>
+  <Fragment slot="copy">
+    <CompanyIntro />
+  </Fragment>
+
+  <Fragment slot="stage">
+    <canvas data-canvas aria-hidden="true"></canvas>
+  </Fragment>
+</PageShell>
+
+<script>
+  import { initCompany } from '../scripts/company';
+  import { loadSettings } from '../scripts/settings';
+
+  const stage = document.querySelector<HTMLElement>('[data-page-stage]');
+  if (stage) {
+    const panel = initCompany(stage);
+    loadSettings().then(({ company }) => {
+      if (company) panel.update(company);
+    });
+  }
+</script>
+
+<style>
+  canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+</style>

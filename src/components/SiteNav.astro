@@ -1,0 +1,433 @@
+---
+/**
+ * Site header. Links point at real routes only — a nav item that 404s costs
+ * crawl budget and looks broken, so new items land here when their page does.
+ *
+ * Services and Platform & Science each carry a menu of the pages beneath them. These are
+ * ordinary links: every topic is its own route now, so there is nothing to
+ * select in place and nothing that needs JavaScript to navigate.
+ */
+interface MenuItem {
+  href: string;
+  title: string;
+  blurb: string;
+}
+
+interface NavItem {
+  href: string;
+  label: string;
+  menu?: { items: MenuItem[] };
+}
+
+const links: NavItem[] = [
+  {
+    href: '/services',
+    label: 'Services',
+    menu: {
+      items: [
+        {
+          href: '/services/adoption-strategy',
+          title: 'AI Adoption Strategy',
+          blurb: 'Identify where AI can create measurable value.',
+        },
+        {
+          href: '/services/validation-benchmarking',
+          title: 'Validation & Benchmarking',
+          blurb: 'Prove what works for your science.',
+        },
+        {
+          href: '/services/ai-data-products',
+          title: 'AI & Data Products',
+          blurb: 'Build around your data, workflows, and portfolio.',
+        },
+        {
+          href: '/services/portfolio-intelligence',
+          title: 'Portfolio Intelligence',
+          blurb: 'Turn complex evidence into better R&D decisions.',
+        },
+      ],
+    },
+  },
+  {
+    href: '/science',
+    label: 'Platform & Science',
+    menu: {
+      items: [
+        {
+          href: '/science/platform',
+          title: 'Platform',
+          blurb: 'One layer between model and decision.',
+        },
+        {
+          href: '/science/generalizability',
+          title: 'Generalizability Measurements',
+          blurb: 'Assess whether frontier models learned the biology you need.',
+        },
+      ],
+    },
+  },
+  { href: '/company', label: 'Company' },
+];
+
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+
+// A nav item's own page, or one of its real sub-pages (e.g. Science's
+// /science/platform) — not a hash anchor, which never changes the pathname.
+const isCurrent = (href: string) => path === href || path.startsWith(`${href}/`);
+---
+
+<header class="nav-bar" data-site-nav>
+  <a class="brand" href="/">
+    <img class="brand-logo" src="/images/icon.svg" alt="" width="24" height="24" />
+    <span class="brand-name">DiligenceBio</span>
+    <span class="brand-tag" data-brand-tag>Vendor Agnostic AI</span>
+  </a>
+
+  <nav class="nav-links" aria-label="Primary">
+    {
+      links.map(({ href, label, menu }) =>
+        menu ? (
+          <div class="menu">
+            <a class="nav-link" href={href} aria-current={isCurrent(href) ? 'page' : undefined}>
+              {label}
+            </a>
+            <div class="menu-panel">
+              {menu.items.map((item) => (
+                <a href={item.href}>
+                  <span class="menu-title">{item.title}</span>
+                  <span class="menu-blurb">{item.blurb}</span>
+                </a>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <a class="nav-link" href={href} aria-current={isCurrent(href) ? 'page' : undefined}>
+            {label}
+          </a>
+        ),
+      )
+    }
+    <a class="btn btn-primary nav-cta" href="/request-access">Request access</a>
+    <span class="nav-break" aria-hidden="true"></span>
+  </nav>
+</header>
+
+<script>
+  import { loadSettings, applySettings } from '../scripts/settings';
+  import { NAV_DEFAULTS, type NavOptions } from '../scripts/nav';
+
+  // The menus are shut until this says otherwise — see the [data-menus='on']
+  // gate in the styles below.
+  const opts: NavOptions = { ...NAV_DEFAULTS };
+  loadSettings().then(({ nav }) => {
+    applySettings(opts, nav);
+    if (!opts.hoverMenus) return;
+    for (const bar of document.querySelectorAll<HTMLElement>('[data-site-nav]')) {
+      bar.dataset.menus = 'on';
+    }
+  });
+
+  // Moving off a menu clears the closed-on-click state, so hover works again.
+  for (const menu of document.querySelectorAll<HTMLElement>('.menu')) {
+    menu.addEventListener('mouseleave', () => menu.classList.remove('is-closed'));
+  }
+
+  // Close the menu on the way out: the navigation fades the page for 300ms,
+  // and an open panel sitting over that fade reads as a stuck menu.
+  document.querySelectorAll<HTMLAnchorElement>('.menu-panel a').forEach((link) => {
+    link.addEventListener('click', () => {
+      link.closest<HTMLElement>('.menu')?.classList.add('is-closed');
+      (document.activeElement as HTMLElement | null)?.blur?.();
+    });
+  });
+</script>
+
+<style>
+  .nav-bar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-6);
+    padding: 18px 32px;
+    border-bottom: 2px solid var(--color-divider);
+    flex: none;
+    background: var(--color-bg);
+  }
+
+  .brand {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    color: var(--color-text);
+    text-decoration: none;
+    flex: none;
+  }
+
+  /* .brand aligns its items on the text baseline so brand-name and brand-tag
+     (different font sizes) sit level. A logo mark has no text baseline to
+     share, so it is pinned instead to the vertical centre of the row. */
+  .brand-logo {
+    align-self: center;
+    flex: none;
+    /* .brand's gap (10px) is shared with the wider name/tag pairing below it;
+       pulling just this side in keeps that one unchanged. */
+    margin-right: -8px;
+  }
+
+  .brand-name {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: 18px;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+  }
+
+  .brand-tag {
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-neutral-600);
+    white-space: nowrap;
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    justify-content: flex-end;
+    gap: clamp(12px, 2.2vw, 28px);
+  }
+
+  /* Scoped to .nav-link, not to "every a in the nav". A :not() chain broad
+     enough to cover both would also outrank .menu-panel a:hover on
+     specificity, which paints the hovered menu item accent-on-accent. */
+  .nav-link {
+    font-size: clamp(13px, 1.25vw, 15px);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-text);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .nav-link:hover,
+  .nav-link[aria-current='page'] {
+    color: var(--color-accent);
+  }
+
+  /* The vertical padding bridges the gap to the panel, so moving the pointer
+     from the label onto the menu never crosses dead space and closes it. */
+  .menu {
+    position: relative;
+    padding: 20px 0;
+    margin: -20px 0;
+  }
+
+  .menu-panel {
+    position: absolute;
+    top: 100%;
+    left: -18px;
+    /* Never wider than the window, or the panel hangs off a narrow one. */
+    width: min(336px, calc(100vw - 40px));
+    display: none;
+    background: var(--color-bg);
+    border: 2px solid var(--color-divider);
+    border-top: 0;
+    z-index: 20;
+    box-shadow: var(--shadow-md);
+  }
+
+  /* Opt-in, via nav.hoverMenus in public/settings.json. Every rule that opens
+     a panel is gated on [data-menus='on'], which the script above sets only
+     after reading that setting — so "off" is the state you get from the
+     setting being false, from settings.json being unreachable, and from having
+     no JavaScript at all, rather than something that has to be switched off in
+     time to prevent a flash.
+
+     focus-within keeps the menu reachable by keyboard, which the hover-only
+     design source could not be. */
+  .nav-bar[data-menus='on'] .menu:hover .menu-panel,
+  .nav-bar[data-menus='on'] .menu:focus-within .menu-panel {
+    display: block;
+  }
+
+  /* No pointer, no menu. A dropdown that needs hover is a trap on a phone: it
+     either never opens, or it eats the tap that should have followed the link.
+     The label is already a link to the page these sections live on, and the
+     page lists them, so nothing here is unreachable without it. */
+  @media (hover: none) {
+    .nav-bar[data-menus='on'] .menu:hover .menu-panel,
+    .nav-bar[data-menus='on'] .menu:focus-within .menu-panel {
+      display: none;
+    }
+  }
+
+  /* Set when an item is picked, so the menu closes under a pointer that is
+     still resting on it. Cleared on mouseleave. Carries the same gate as the
+     rules above so it matches them on specificity and wins on source order. */
+  .nav-bar[data-menus='on'] .menu.is-closed .menu-panel {
+    display: none;
+  }
+
+  .menu-panel a {
+    display: block;
+    padding: 14px 18px;
+    text-decoration: none;
+    color: var(--color-text);
+  }
+
+  .menu-panel a + a {
+    border-top: 2px solid var(--color-divider);
+  }
+
+  .menu-panel a:hover,
+  .menu-panel a:focus-visible {
+    background: var(--color-accent);
+    color: var(--color-neutral-100);
+  }
+
+  .menu-title {
+    display: block;
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: 13px;
+    letter-spacing: -0.01em;
+  }
+
+  .menu-blurb {
+    display: block;
+    font-size: 12px;
+    line-height: 1.4;
+    color: currentColor;
+    opacity: 0.7;
+    margin-top: 3px;
+  }
+
+  .nav-cta {
+    padding: 9px 14px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+
+  /* Only exists to end the first row once the nav wraps; see the query below. */
+  .nav-break {
+    display: none;
+  }
+
+  /* Below this the nav becomes two rows — brand, then the links — rather than
+     one crowded one. It must not drop the links instead: Services, Platform &
+     Science and Company are the site's content, and hiding them here strands a phone on
+     whichever page it landed on. */
+  @media (max-width: 760px) {
+    .nav-bar {
+      flex-wrap: wrap;
+      justify-content: flex-start;
+      padding: 14px 20px;
+      gap: 12px 18px;
+    }
+
+    /* display: contents dissolves the nav's own box so the brand, the links and
+       the button all become items of the same flex row and can be ordered
+       across two lines: brand and button first, links beneath. The <nav>
+       landmark itself is unaffected. */
+    .nav-links {
+      display: contents;
+    }
+
+    /* Flex breaks lines before it shrinks items, so an un-capped brand would
+       keep the tag beside the name and push the button onto a row of its own.
+       Capping it to the room the button leaves makes the tag wrap under the
+       name instead — it stays visible, and the nav stays two rows. */
+    .brand {
+      order: 1;
+      flex-wrap: wrap;
+      row-gap: 2px;
+      max-width: calc(100% - 140px);
+    }
+
+    .nav-cta {
+      order: 2;
+      margin-left: auto;
+      padding: 8px 12px;
+      font-size: 11px;
+    }
+
+    /* A full-width, zero-height item: flexbox has no "break here", so this
+       closes the brand row and drops the links onto their own. */
+    .nav-break {
+      display: block;
+      order: 3;
+      flex-basis: 100%;
+      height: 0;
+    }
+
+    .menu,
+    .nav-link {
+      order: 4;
+      font-size: 12px;
+    }
+
+    /* Anchored to the nav bar rather than to the label: the labels sit on the
+       second row, and a panel hung off the right-hand one would run past the
+       edge of a phone. Dropping it under the whole bar also gives it the full
+       width to use. */
+    .menu {
+      position: static;
+      /* The panel hangs off the bottom of the bar, so the bar's own bottom
+         padding sits between the label and it. Without this the pointer
+         crosses un-hovered ground on the way down and the menu shuts before
+         it can be reached. The negative margin keeps the row's height. */
+      padding: 0 0 16px;
+      margin: 0 0 -16px;
+    }
+
+    .menu-panel {
+      left: 20px;
+      right: 20px;
+      width: auto;
+    }
+  }
+
+  /* A phone on its side has width to spare and almost no height: put the nav
+     back on one row rather than let the wrapped layout above spend a quarter
+     of the viewport on it. Must follow that query to override it. */
+  @media (orientation: landscape) and (max-height: 520px) {
+    .nav-bar {
+      flex-wrap: nowrap;
+      justify-content: space-between;
+      padding: 10px 20px;
+      gap: 16px;
+    }
+
+    .nav-links {
+      display: flex;
+      width: auto;
+    }
+
+    .nav-break {
+      display: none;
+    }
+
+    /* The wrapped layout above orders the items to lay them across two rows.
+       Back on one row that ordering is wrong — .nav-links sorts ahead of the
+       brand and the button lands before the links — so clear all of it and
+       let the markup order stand. */
+    .brand,
+    .nav-links,
+    .nav-cta,
+    .menu,
+    .nav-link {
+      order: 0;
+    }
+
+    .brand {
+      max-width: none;
+      flex-wrap: nowrap;
+    }
+
+    .nav-cta {
+      margin-left: 0;
+    }
+  }
+</style>
