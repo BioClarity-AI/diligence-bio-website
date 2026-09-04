@@ -1,0 +1,316 @@
+---
+import Base from './Base.astro';
+import SiteNav from '../components/SiteNav.astro';
+import CompanyIntro from '../components/CompanyIntro.astro';
+
+/**
+ * An open role: the same People/Advisors directory as the Company page on the
+ * left, the job itself on the right — the inverse of every other split page,
+ * where the right side is a canvas rather than the page's own topic.
+ */
+/** A plain bullet, or one with a bold lead-in label before the colon. */
+type Bullet = string | { label: string; text: string };
+
+export interface Props {
+  title: string;
+  description: string;
+  heading: string;
+  claim: string;
+  /** One paragraph per entry. */
+  intro: string[];
+  own: Bullet[];
+  lookingFor: Bullet[];
+  location: string;
+}
+
+const { title, description, heading, claim, intro, own, lookingFor, location } = Astro.props;
+---
+
+<Base title={title} description={description}>
+  <div class="shell">
+    <SiteNav />
+    <main class="split">
+      <div class="copy" data-page-copy>
+        <CompanyIntro compact />
+      </div>
+
+      <div class="role">
+        <p class="crumb">
+          <span class="pulse" aria-hidden="true"></span>
+          <a href="/company">Company</a>
+          <span class="slash" aria-hidden="true">/</span>
+          <span class="index">Open position</span>
+        </p>
+
+        <h1>{heading}</h1>
+        <p class="claim">{claim}</p>
+
+        <div class="section">
+          {intro.map((p) => <p>{p}</p>)}
+        </div>
+
+        <div class="section">
+          <p class="section-label">What you will own</p>
+          <ul class="bullets">
+            {
+              own.map((item) => (
+                <li>
+                  <span class="dot" aria-hidden="true" />
+                  <span>
+                    {typeof item === 'string' ? (
+                      item
+                    ) : (
+                      <>
+                        <strong>{item.label}:</strong> {item.text}
+                      </>
+                    )}
+                  </span>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+
+        <div class="section">
+          <p class="section-label">What we are looking for</p>
+          <ul class="bullets">
+            {
+              lookingFor.map((item) => (
+                <li>
+                  <span class="dot" aria-hidden="true" />
+                  <span>
+                    {typeof item === 'string' ? (
+                      item
+                    ) : (
+                      <>
+                        <strong>{item.label}:</strong> {item.text}
+                      </>
+                    )}
+                  </span>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+
+        <div class="apply">
+          <a class="apply-cta" href="/request-access">Apply →</a>
+          <span class="location">{location}</span>
+        </div>
+      </div>
+    </main>
+  </div>
+</Base>
+
+<style>
+  .shell {
+    height: 100dvh;
+    min-height: 460px;
+    display: flex;
+    flex-direction: column;
+    background: var(--color-bg);
+    color: var(--color-text);
+    overflow: hidden;
+  }
+
+  .split {
+    flex: 1;
+    display: grid;
+    grid-template-columns: minmax(380px, 40%) 1fr;
+    min-height: 0;
+  }
+
+  .copy {
+    position: relative;
+    padding: 28px 44px 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    border-right: 2px solid var(--color-divider);
+    min-width: 0;
+    min-height: 0;
+    overflow-y: auto;
+  }
+
+  .role {
+    padding: 28px clamp(20px, 3.4vw, 48px) 56px;
+    min-width: 0;
+    min-height: 0;
+    overflow-y: auto;
+  }
+
+  .crumb {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 18px;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .crumb a {
+    color: var(--color-neutral-700);
+    text-decoration: none;
+  }
+
+  .crumb a:hover {
+    color: var(--color-accent);
+  }
+
+  .slash {
+    color: var(--color-neutral-500);
+  }
+
+  .index {
+    color: var(--color-accent);
+  }
+
+  .pulse {
+    width: 8px;
+    height: 8px;
+    flex: none;
+    background: var(--color-accent);
+    animation: bc-pulse 2.4s ease-in-out infinite;
+  }
+
+  h1 {
+    font-size: clamp(28px, 3vw, 44px);
+    line-height: 1.04;
+    letter-spacing: -0.025em;
+    margin: 0 0 16px;
+    max-width: 22ch;
+  }
+
+  .claim {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: 18px;
+    line-height: 1.35;
+    margin: 0 0 18px;
+    max-width: 46ch;
+  }
+
+  .section {
+    border-top: 2px solid var(--color-divider);
+    padding-top: 20px;
+    margin-top: 30px;
+  }
+
+  .section:first-of-type {
+    margin-top: 0;
+  }
+
+  .section p {
+    font-size: 16px;
+    line-height: 1.55;
+    color: var(--color-neutral-800);
+    margin: 0;
+    max-width: 62ch;
+    text-wrap: pretty;
+  }
+
+  .section p + p {
+    margin-top: 14px;
+  }
+
+  .bullets strong {
+    font-weight: 800;
+  }
+
+  .section-label {
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-neutral-700);
+    margin: 0 0 16px;
+  }
+
+  .bullets {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 62ch;
+  }
+
+  .bullets li {
+    display: grid;
+    grid-template-columns: 14px 1fr;
+    gap: 12px;
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--color-neutral-800);
+    text-wrap: pretty;
+  }
+
+  .bullets .dot {
+    width: 6px;
+    height: 6px;
+    background: var(--color-accent);
+    margin-top: 8px;
+  }
+
+  .apply {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    border-top: 2px solid var(--color-divider);
+    margin-top: 30px;
+    padding-top: 20px;
+  }
+
+  .apply-cta {
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--color-neutral-100);
+    background: var(--color-accent);
+    padding: 12px 18px;
+  }
+
+  .apply-cta:hover {
+    background: var(--color-accent-600);
+  }
+
+  .location {
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--color-neutral-700);
+  }
+
+  /* Stack in portrait, like every other split page — the role is the reason
+     someone followed this link, so it leads; the directory follows. */
+  @media (orientation: portrait) and (max-width: 900px) {
+    .shell {
+      height: auto;
+      min-height: 100svh;
+      overflow: visible;
+    }
+    .split {
+      grid-template-columns: 1fr;
+    }
+    .role {
+      order: 1;
+      padding: 32px 20px 40px;
+      overflow: visible;
+    }
+    .copy {
+      order: 2;
+      padding: 32px 20px 40px;
+      border-right: 0;
+      border-top: 2px solid var(--color-divider);
+      overflow: visible;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pulse {
+      animation: none;
+    }
+  }
+</style>

@@ -1,0 +1,41 @@
+---
+import IndexPage from '../layouts/IndexPage.astro';
+import type { Card } from '../components/IndexCards.astro';
+
+const cards: Card[] = [
+  {
+    href: '/science/platform',
+    index: '01',
+    title: 'Platform',
+    blurb:
+      'Measurement and metrics for agentic AI systems and frontier models, plus scalable annotation that makes your proprietary data AI-ready for any vendor.',
+    cta: 'See the platform',
+  },
+  {
+    href: '/science/generalizability',
+    index: '02',
+    title: 'Generalizability Measurements',
+    blurb:
+      'Assess whether frontier models learned the biology you need — not whether they fit the data they were given.',
+    cta: 'See the measurements',
+  },
+  {
+    href: '/science/publications',
+    index: '03',
+    title: 'Publications',
+    blurb:
+      'Peer-reviewed papers and preprints behind the platform, from negative sampling to inductive tests of generalizability.',
+    cta: 'Read the papers',
+  },
+];
+---
+
+<IndexPage
+  title="Science — DiligenceBio"
+  description="Does the AI actually learn biology? The measurement layer behind DiligenceBio: explainability and generalizability metrics for agentic systems and frontier models."
+  eyebrow="Our science"
+  heading="Does the AI Actually Learn Biology?"
+  lede="Frontier models are moving toward world models that understand the consequences of their actions. We expect that within ten years, and we build the measurement layer that tells you which models are getting there."
+  cards={cards}
+  cols={3}
+/>

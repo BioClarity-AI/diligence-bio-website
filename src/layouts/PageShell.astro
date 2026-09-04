@@ -1,0 +1,154 @@
+---
+import Base from './Base.astro';
+import SiteNav from '../components/SiteNav.astro';
+
+/**
+ * The shell every page shares: one viewport tall, nav across the top, then a
+ * scrolling copy column beside a fixed stage panel that the copy is read
+ * against.
+ *
+ * The `data-page-copy` / `data-page-stage` hooks are load-bearing — the wheel
+ * forwarder finds the columns by them, and the page fade in Base waits for
+ * `data-page-copy` before revealing the body.
+ *
+ * The design source is desktop-only. Below 900px the columns stack with the
+ * stage on top, and the document scrolls normally again (see the matching
+ * query in global.css).
+ */
+export interface Props {
+  title: string;
+  description: string;
+  image?: string;
+  noindex?: boolean;
+  /**
+   * `wide` gives the copy column more of the split and a tighter side gutter —
+   * used by the pages whose copy carries several long sections.
+   */
+  wide?: boolean;
+}
+
+const { title, description, image, noindex, wide = false } = Astro.props;
+---
+
+<Base title={title} description={description} image={image} noindex={noindex}>
+  <div class="shell">
+    <SiteNav />
+    <main class:list={['split', { wide }]}>
+      <div class:list={['copy', { wide }]} data-page-copy>
+        <slot name="copy" />
+      </div>
+      <div class="stage" data-page-stage>
+        <slot name="stage" />
+      </div>
+    </main>
+  </div>
+</Base>
+
+<script>
+  import { initScrollForward } from '../scripts/scrollForward';
+  initScrollForward();
+</script>
+
+<style>
+  .shell {
+    height: 100dvh;
+    min-height: 460px;
+    display: flex;
+    flex-direction: column;
+    background: var(--color-bg);
+    color: var(--color-text);
+    overflow: hidden;
+  }
+
+  /* The percentages are tokens in global.css; the pixel floors stay here
+     because they are a property of this layout, not of the design system. */
+  .split {
+    flex: 1;
+    display: grid;
+    grid-template-columns: minmax(380px, var(--split-copy)) 1fr;
+    min-height: 0;
+  }
+
+  .split.wide {
+    grid-template-columns: minmax(280px, var(--split-copy-wide)) 1fr;
+  }
+
+  .copy {
+    /* Makes this the offsetParent of the sections inside it, so the panel's
+       scroll-to-section maths measures from the column and not from the body
+       — otherwise it overshoots by the height of the nav. */
+    position: relative;
+    padding: 28px 44px 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    border-right: 2px solid var(--color-divider);
+    min-width: 0;
+    min-height: 0;
+    overflow-y: auto;
+  }
+
+  .copy.wide {
+    display: block;
+    padding: 28px clamp(20px, 3.4vw, 44px) 56px;
+  }
+
+  .stage {
+    position: relative;
+    overflow: hidden;
+    min-width: 0;
+    min-height: 0;
+  }
+
+  /* Stack in portrait only. Landscape keeps the split at every width: height
+     is the scarce resource there, and stacking a 320px-tall viewport buries
+     the stage under a screenful of copy. A narrow landscape window gets
+     proportional columns instead — see the query below. */
+  @media (orientation: portrait) and (max-width: 900px) {
+    .shell {
+      height: auto;
+      min-height: 100svh;
+      overflow: visible;
+    }
+    .split,
+    .split.wide {
+      grid-template-columns: 1fr;
+    }
+    /* Stacked, the stage leads and the copy follows. Only the visual order is
+       swapped — the copy still comes first in the markup, so the h1 stays the
+       page's first content for a crawler. */
+    .stage {
+      order: 1;
+      min-height: 60svh;
+      border-bottom: 2px solid var(--color-divider);
+    }
+    .copy {
+      order: 2;
+      padding: 32px 20px 40px;
+      border-right: 0;
+      overflow: visible;
+    }
+  }
+
+  /* A phone on its side: two columns, but only ~400px of height to put them
+     in, and sometimes under 600 of width. The shell has to stop insisting on
+     a 460px minimum it does not have, or the document scrolls behind the
+     fixed panel; the copy gives back padding it has no room for; and the
+     columns go proportional, because the 380px floor on the copy column would
+     leave the stage a sliver on a 568px-wide screen. */
+  @media (orientation: landscape) and (max-height: 520px) {
+    .shell {
+      min-height: 0;
+    }
+    /* No pixel floor here on purpose: 380px of copy on a 568px-wide screen
+       leaves the stage a sliver, so the split stays proportional. */
+    .split,
+    .split.wide {
+      grid-template-columns: minmax(0, var(--split-copy-landscape)) 1fr;
+    }
+    .copy,
+    .copy.wide {
+      padding: 18px clamp(14px, 2.6vw, 32px) 24px;
+    }
+  }
+</style>

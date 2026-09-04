@@ -1,0 +1,43 @@
+---
+import DetailPage from '../../layouts/DetailPage.astro';
+import SceneStage from '../../components/SceneStage.astro';
+
+const prev = { href: '/services/adoption-strategy', label: 'AI Adoption Strategy' };
+const next = { href: '/services/ai-data-products', label: 'AI & Data Products' };
+---
+
+<DetailPage
+  title="Validation & Benchmarking — DiligenceBio"
+  description="AI should earn trust against your data, workflows, and scientific standards. Benchmark-first evaluation that proves what works for your science."
+  parent={{ href: '/services', label: 'Services' }}
+  index="02"
+  heading="Validation & Benchmarking"
+  claim="AI should earn trust against your data, workflows, and scientific standards."
+  prev={prev}
+  next={next}
+>
+  <p>Prove what works for your science.</p>
+
+  <Fragment slot="stage">
+    <SceneStage
+      kicker="Service 02 — live"
+      title="VALIDATION & BENCHMARKING"
+      prev={prev}
+      next={next}
+    />
+  </Fragment>
+</DetailPage>
+
+<script>
+  import { initSceneStage } from '../../scripts/sceneStage';
+  import { validationScene, SERVICES_LAYOUT } from '../../scripts/services';
+  import { loadSettings } from '../../scripts/settings';
+
+  const stage = document.querySelector<HTMLElement>('[data-page-stage]');
+  if (stage) {
+    const panel = initSceneStage(stage, { scene: validationScene(), ...SERVICES_LAYOUT });
+    loadSettings().then(({ services }) => {
+      if (services) panel.update({ speed: services.speed, mono: services.mono });
+    });
+  }
+</script>

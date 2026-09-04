@@ -1,0 +1,384 @@
+---
+/**
+ * The hero's live simulation. The canvas is decorative — every claim it
+ * illustrates is also stated in the copy beside it — so it carries aria-hidden
+ * and the page reads correctly without it.
+ *
+ * Animation parameters come from public/settings.json at runtime. Passing a
+ * prop here pins that one value and opts it out of the settings file — use it
+ * for a one-off instance, not for tuning the hero.
+ */
+interface Props {
+  speed?: number;
+  holdTime?: number;
+  linkStrength?: number;
+  mouseForce?: number;
+  mono?: boolean;
+}
+
+// Deliberately no defaults: an omitted prop must leave its data attribute off
+// the element entirely, otherwise it would pin the value and settings.json
+// could never take effect.
+const { speed, holdTime, linkStrength, mouseForce, mono } = Astro.props;
+
+const attr = (value: number | boolean | undefined) =>
+  value === undefined ? undefined : String(value);
+---
+
+<div
+  class="emergence"
+  data-emergence
+  data-speed={attr(speed)}
+  data-hold-time={attr(holdTime)}
+  data-link-strength={attr(linkStrength)}
+  data-mouse-force={attr(mouseForce)}
+  data-mono={attr(mono)}
+>
+  <canvas data-canvas aria-hidden="true"></canvas>
+
+  <div class="overlay">
+    <div class="lead">
+      <p class="kicker">Emergence — live</p>
+      <p class="readout" data-readout aria-live="off">INITIALIZING</p>
+
+      <div class="controls">
+        <button type="button" data-prev title="Previous view" aria-label="Previous view">←</button>
+        <button type="button" data-next title="Next view" aria-label="Next view">→</button>
+        <span class="sep" aria-hidden="true"></span>
+        <button type="button" data-lock class="lock" title="Lock this view" aria-pressed="false">
+          <span class="lock-dot" data-lock-dot aria-hidden="true"></span>
+          <span data-lock-label>Lock</span>
+        </button>
+      </div>
+    </div>
+
+    {/* Where the run has got to, and a way into any formation. The ticks are
+        built by the simulation, which owns the formation list — the markup
+        only says where they go. */}
+    <div class="pager-block">
+      <p class="pager-head">
+        <span>Scale — molecule to organism</span>
+        <span><span data-pager-num>01</span> / <span data-pager-total>10</span></span>
+      </p>
+      <div class="pager" data-pager></div>
+    </div>
+  </div>
+
+  {/* Reads the canvas for anyone who cannot see it: what the two colours mean,
+      and what the drawing is arguing. It sits across the foot of the panel,
+      under a rule, so it never competes with the readout for the top-left
+      corner. The swatches are decorative — the words beside them carry it. */}
+  <div class="legend" data-caption-bar>
+    <p class="caption">Two populations, one structure: AI learns biology.</p>
+    <p class="key">
+      <span class="key-label">Key</span>
+      <span class="key-item"><span class="swatch bio" aria-hidden="true"></span>Biology</span>
+      <span class="key-item"><span class="swatch ai" aria-hidden="true"></span>AI</span>
+    </p>
+  </div>
+</div>
+
+<style>
+  /* Fills the shell's stage panel, which is the positioned ancestor and the
+     element the simulation measures itself against. */
+  .emergence {
+    position: relative;
+    overflow: hidden;
+    min-width: 0;
+    height: 100%;
+  }
+
+  canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  /* Only the controls inside take pointer events — the rest of the stage stays
+     reachable for the wheel forwarder. */
+  .overlay {
+    position: absolute;
+    top: 28px;
+    left: 32px;
+    right: 32px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+    pointer-events: none;
+  }
+
+  /* max-content, not 0: the readout is the one thing that must never be
+     squeezed to fit the pager beside it. */
+  .lead {
+    flex: 0 1 auto;
+    min-width: max-content;
+  }
+
+  .pager-block {
+    flex: 1 1 auto;
+    min-width: 132px;
+    max-width: 320px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .pager-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+    margin: 0;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-neutral-600);
+  }
+
+  .pager {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    height: 4px;
+    pointer-events: auto;
+  }
+
+  /* Real buttons, so a formation is reachable from the keyboard as well as the
+     pointer. The running one widens rather than recolouring alone — at 4px
+     tall, width is the only change big enough to read.
+
+     :global because the simulation creates these at runtime, and Astro scopes
+     styles by stamping an attribute on the elements it renders — a node made
+     in JS never carries it, so a plain .pager-tick rule would never match.
+     Descending from .pager, which IS in the template, keeps them contained. */
+  .pager :global(.pager-tick) {
+    display: block;
+    height: 4px;
+    flex: 1 1 0;
+    padding: 0;
+    border: 0;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    background: var(--color-neutral-300);
+    transition:
+      flex-grow 320ms cubic-bezier(0.22, 0.7, 0.2, 1),
+      background-color 240ms linear;
+  }
+
+  .pager :global(.pager-tick.is-past) {
+    background: var(--color-neutral-500);
+  }
+
+  .pager :global(.pager-tick.is-on) {
+    flex-grow: 3.2;
+  }
+
+  .pager :global(.pager-fill) {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 0%;
+    background: var(--color-accent);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pager :global(.pager-tick) {
+      transition: none;
+    }
+  }
+
+  /* A bar across the foot of the panel: the claim on the left, the key on the
+     right, a rule above both. */
+  .legend {
+    position: absolute;
+    bottom: 26px;
+    left: 32px;
+    right: 32px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px 28px;
+    border-top: 2px solid var(--color-divider);
+    padding-top: 12px;
+    pointer-events: none;
+  }
+
+  .caption {
+    flex: 0 1 auto;
+    min-width: max-content;
+    white-space: nowrap;
+    margin: 0;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: clamp(13px, 1.9vw, 16px);
+    line-height: 1.3;
+    color: var(--color-text);
+  }
+
+  .key {
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin: 0;
+  }
+
+  .key-label {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--color-neutral-600);
+  }
+
+  .key-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-neutral-800);
+  }
+
+  .swatch {
+    width: 8px;
+    height: 8px;
+    flex: none;
+  }
+
+  .swatch.bio {
+    background: var(--color-accent);
+  }
+
+  .swatch.ai {
+    background: var(--color-text);
+  }
+
+  .kicker {
+    margin: 0;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--color-neutral-600);
+  }
+
+  .readout {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: clamp(20px, 3vw, 30px);
+    letter-spacing: -0.01em;
+    line-height: 1;
+    margin: 6px 0 0;
+    color: var(--color-accent);
+  }
+
+  .controls {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 8px;
+    pointer-events: auto;
+    color: var(--color-neutral-600);
+  }
+
+  .controls button {
+    background: none;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1;
+    color: inherit;
+  }
+
+  .controls button:hover {
+    color: var(--color-accent);
+  }
+
+  .sep {
+    width: 1px;
+    height: 11px;
+    background: var(--color-divider);
+  }
+
+  .lock {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-family: var(--font-heading) !important;
+    font-weight: 800;
+    font-size: 10px !important;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .lock-dot {
+    width: 5px;
+    height: 5px;
+    background: transparent;
+    border: 1px solid currentColor;
+  }
+
+  @media (max-width: 900px) {
+    .overlay {
+      top: 20px;
+      left: 20px;
+      right: 20px;
+    }
+    .legend {
+      left: 20px;
+      right: 20px;
+      bottom: 20px;
+    }
+  }
+
+  /* A phone held sideways: keep the overlay off the simulation it labels. The
+     legend goes first — it is the part the copy column can do without, and
+     height is what is scarce here. */
+  @media (orientation: landscape) and (max-height: 520px) {
+    .overlay {
+      top: 10px;
+      left: 14px;
+      right: 14px;
+    }
+    .kicker {
+      display: none;
+    }
+    .readout {
+      font-size: 16px;
+    }
+    .controls {
+      margin-top: 6px;
+    }
+    /* Height is what is scarce here, and the copy column carries the claim
+       anyway — the foot bar and the pager are the first things to go. */
+    .legend,
+    .pager-block {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  import { initEmergence } from '../scripts/emergence';
+  import { loadSettings } from '../scripts/settings';
+
+  // Start on the compiled-in defaults so the hero never waits on a network
+  // round trip, then retune in place once settings.json lands. Restarting
+  // instead of updating would visibly reset the formation mid-cycle.
+  const handles = [...document.querySelectorAll<HTMLElement>('[data-emergence]')].map(
+    (el) => initEmergence(el),
+  );
+
+  if (handles.length) {
+    loadSettings().then(({ emergence }) => {
+      if (emergence) handles.forEach((handle) => handle.update(emergence));
+    });
+  }
+</script>

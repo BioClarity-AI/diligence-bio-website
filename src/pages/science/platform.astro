@@ -1,0 +1,40 @@
+---
+import DetailPage from '../../layouts/DetailPage.astro';
+import SceneStage from '../../components/SceneStage.astro';
+
+const next = { href: '/science/generalizability', label: 'Generalizability Measurements' };
+---
+
+<DetailPage
+  title="Platform — DiligenceBio"
+  description="One layer between model and decision. Measurement and metrics for agentic AI systems and frontier models, plus scalable annotation that makes proprietary data AI-ready for any vendor."
+  parent={{ href: '/science', label: 'Our science' }}
+  index="01"
+  heading="Platform"
+  claim="One layer between model and decision."
+  next={next}
+>
+  <p>
+    Our platform aims at innovating measurement and metrics to evaluate agentic AI systems and
+    frontier models, providing scalable methods to annotate your proprietary data and make it
+    AI-ready, compatible with any AI vendor.
+  </p>
+
+  <Fragment slot="stage">
+    <SceneStage kicker="Our science — live" title="PLATFORM" next={next} />
+  </Fragment>
+</DetailPage>
+
+<script>
+  import { initSceneStage } from '../../scripts/sceneStage';
+  import { platformScene, SCIENCE_LAYOUT } from '../../scripts/science';
+  import { loadSettings } from '../../scripts/settings';
+
+  const stage = document.querySelector<HTMLElement>('[data-page-stage]');
+  if (stage) {
+    const panel = initSceneStage(stage, { scene: platformScene(), ...SCIENCE_LAYOUT });
+    loadSettings().then(({ science }) => {
+      if (science) panel.update({ speed: science.speed, mono: science.mono });
+    });
+  }
+</script>

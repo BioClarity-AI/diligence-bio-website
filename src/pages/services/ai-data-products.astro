@@ -1,0 +1,63 @@
+---
+import DetailPage from '../../layouts/DetailPage.astro';
+import SceneStage from '../../components/SceneStage.astro';
+import { productsChoice } from '../../scripts/services';
+
+const prev = { href: '/services/validation-benchmarking', label: 'Validation & Benchmarking' };
+const next = { href: '/services/portfolio-intelligence', label: 'Portfolio Intelligence' };
+
+// This is the one service whose scene has competing builds, so the stage
+// offers a letter per concept. Read off the scene itself rather than restated
+// here, so the buttons cannot drift from what they switch between — including
+// which one leads, which is simply the first entry.
+const variants = productsChoice().variants.map(({ id, label, title }) => ({ id, label, title }));
+---
+
+<DetailPage
+  title="AI & Data Products — DiligenceBio"
+  description="Build around your science and portfolio, not around the limitations of a platform — while equipping your internal IT and data teams to become builders."
+  parent={{ href: '/services', label: 'Services' }}
+  index="03"
+  heading="AI & Data Products"
+  claim="Build around your science and portfolio—not around the limitations of a platform."
+  prev={prev}
+  next={next}
+>
+  <p>Build around your data, workflows, and portfolio.</p>
+  <p>
+    Build around your data, workflows, and portfolio—while equipping your internal IT and data
+    teams to become builders, not permanent dependents on external vendors.
+  </p>
+  <blockquote>
+    <p>
+      “I don’t yet know how to engineer a biologic, and it’s too early to bring in a molecular
+      engineer. I’d like to design a biologic for my target and develop it into a proposal for
+      further development. AI would be the perfect business partner for this stage.”
+    </p>
+    <footer>Biologist, customer discovery interview</footer>
+  </blockquote>
+
+  <Fragment slot="stage">
+    <SceneStage
+      kicker="Service 03 — live"
+      title="AI & DATA PRODUCTS"
+      prev={prev}
+      next={next}
+      variants={variants}
+    />
+  </Fragment>
+</DetailPage>
+
+<script>
+  import { initSceneStage } from '../../scripts/sceneStage';
+  import { productsChoice, SERVICES_LAYOUT } from '../../scripts/services';
+  import { loadSettings } from '../../scripts/settings';
+
+  const stage = document.querySelector<HTMLElement>('[data-page-stage]');
+  if (stage) {
+    const panel = initSceneStage(stage, { scene: productsChoice(), ...SERVICES_LAYOUT });
+    loadSettings().then(({ services }) => {
+      if (services) panel.update({ speed: services.speed, mono: services.mono });
+    });
+  }
+</script>

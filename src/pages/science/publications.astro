@@ -1,0 +1,382 @@
+---
+import Base from '../../layouts/Base.astro';
+import SiteNav from '../../components/SiteNav.astro';
+
+/**
+ * The one page on the site with no stage: a full-width list rather than a
+ * copy/canvas split, because the content itself — the citations — is the
+ * argument. Shares IndexPage's locked-viewport shell rather than PageShell's
+ * split, and DetailPage's breadcrumb styling rather than its wide single-claim
+ * body.
+ */
+interface Publication {
+  year: string;
+  authors: string;
+  title: string;
+  /** Italicised venue name, e.g. "Nature Communications, 14". */
+  venue: string;
+  /** Plain text following the italic venue, e.g. "(1), 1989." */
+  detail: string;
+  tag: string;
+  /** Preprints get a neutral outline; named venues get a filled accent tag. */
+  tagVariant: 'preprint' | 'venue';
+  href: string;
+  linkLabel: string;
+}
+
+const publications: Publication[] = [
+  {
+    year: '2026',
+    authors:
+      'Ravandi, C. B., Mowrey, W. R., Chatterjee, A., Khanshan, F., Haddadi, P., Mobarec, J. C., Lambden, S., Eliassi-Rad, T., Ricchiuto, P., & Risa, G.',
+    title:
+      '(2026). Clinical trial and ontology-derived positive and negative benchmark datasets for drug repurposing across rare diseases.',
+    venue: 'bioRxiv',
+    detail: ', 2026.06.15.732135.',
+    tag: 'Preprint',
+    tagVariant: 'preprint',
+    href: 'https://doi.org/10.64898/2026.06.15.732135',
+    linkLabel: 'doi.org/10.64898/2026.06.15.732135',
+  },
+  {
+    year: '2025',
+    authors: 'Chatterjee, A., Ikica, B., Ravandi, B., & Palowitch, J.',
+    title: '(2025). Transfer learning for temporal link prediction.',
+    venue: '2025 International Joint Conference on Neural Networks (IJCNN)',
+    detail: ', 1–8.',
+    tag: 'IEEE IJCNN 2025',
+    tagVariant: 'venue',
+    href: 'https://ieeexplore.ieee.org/document/11228624',
+    linkLabel: 'ieeexplore.ieee.org/document/11228624',
+  },
+  {
+    year: '2025',
+    authors:
+      'Chatterjee, A., Ravandi, B., Haddadi, P., Philip, N. H., Abdelmessih, M., Mowrey, W. R., Ricchiuto, P., Liang, Y., Ding, W., Mobarec, J. C., & Eliassi-Rad, T.',
+    title:
+      '(2025). Topology-driven negative sampling enhances generalizability in protein–protein interaction prediction.',
+    venue: 'Bioinformatics, 41',
+    detail: '(5), btaf148.',
+    tag: 'Bioinformatics',
+    tagVariant: 'venue',
+    href: 'https://doi.org/10.1093/bioinformatics/btaf148',
+    linkLabel: 'doi.org/10.1093/bioinformatics/btaf148',
+  },
+  {
+    year: '2024',
+    authors:
+      'Ravandi, B., Mowrey, W. R., Chatterjee, A., Haddadi, P., Abdelmessih, M., Ding, W., Lambden, S., Ughetto, M., Barrett, I., Diethe, T., Del Angel, G., Eliassi-Rad, T., & Ricchiuto, P.',
+    title:
+      '(2024). Representation learning of human disease mechanisms for a foundation model in rare and common diseases.',
+    venue: 'bioRxiv',
+    detail: ', 2024.11.19.624381.',
+    tag: 'Preprint',
+    tagVariant: 'preprint',
+    href: 'https://doi.org/10.1101/2024.11.19.624381',
+    linkLabel: 'doi.org/10.1101/2024.11.19.624381',
+  },
+  {
+    year: '2024',
+    authors: 'Shafi, Z., Chatterjee, A., & Eliassi-Rad, T.',
+    title: '(2024). Generating human understandable explanations for node embeddings.',
+    venue: 'arXiv',
+    detail: ', 2406.07642.',
+    tag: 'Preprint',
+    tagVariant: 'preprint',
+    href: 'https://arxiv.org/abs/2406.07642',
+    linkLabel: 'arxiv.org/abs/2406.07642',
+  },
+  {
+    year: '2024',
+    authors: 'Sunil, S., Rajeev, R. S., Chatterjee, A., Pilitsis, J., Mukherjee, A., & Paluh, J. L.',
+    title: '(2024). SIENNA: Lightweight generalizable machine learning platform for brain tumor diagnostics.',
+    venue: 'medRxiv',
+    detail: ', 2024.04.03.24305210.',
+    tag: 'Preprint',
+    tagVariant: 'preprint',
+    href: 'https://doi.org/10.1101/2024.04.03.24305210',
+    linkLabel: 'doi.org/10.1101/2024.04.03.24305210',
+  },
+  {
+    year: '2023',
+    authors:
+      'Chatterjee, A., Walters, R., Shafi, Z., Ahmed, O. S., Sebek, M., Gysi, D., Yu, R., Eliassi-Rad, T., Barabási, A.-L., & Menichetti, G.',
+    title: '(2023). Improving the generalizability of protein-ligand binding predictions with AI-Bind.',
+    venue: 'Nature Communications, 14',
+    detail: '(1), 1989.',
+    tag: 'Nature Communications',
+    tagVariant: 'venue',
+    href: 'https://doi.org/10.1038/s41467-023-37572-z',
+    linkLabel: 'doi.org/10.1038/s41467-023-37572-z',
+  },
+  {
+    year: '2023',
+    authors: 'Chatterjee, A., Walters, R., Menichetti, G., & Eliassi-Rad, T.',
+    title: '(2023). Inductive link prediction in static and temporal graphs for isolated nodes.',
+    venue: 'Temporal Graph Learning Workshop @ NeurIPS 2023',
+    detail: '.',
+    tag: 'NeurIPS Workshop',
+    tagVariant: 'venue',
+    href: 'https://openreview.net/forum?id=DRrSYKNhD1',
+    linkLabel: 'openreview.net/forum?id=DRrSYKNhD1',
+  },
+  {
+    year: '2023',
+    authors: 'Chatterjee, A., Walters, R., Menichetti, G., & Eliassi-Rad, T.',
+    title: '(2023). Disentangling node attributes from graph topology for improved generalizability in link prediction.',
+    venue: 'arXiv',
+    detail: ', 2307.08877.',
+    tag: 'Preprint',
+    tagVariant: 'preprint',
+    href: 'https://arxiv.org/abs/2307.08877',
+    linkLabel: 'arxiv.org/abs/2307.08877',
+  },
+  {
+    year: '2023',
+    authors: 'Shafi, Z., Miller, B. A., Chatterjee, A., Eliassi-Rad, T., & Caceres, R. S.',
+    title: '(2023). GRASP: Accelerating shortest path attacks via graph attention.',
+    venue: 'arXiv',
+    detail: ', 2310.07980.',
+    tag: 'Preprint',
+    tagVariant: 'preprint',
+    href: 'https://arxiv.org/abs/2310.07980',
+    linkLabel: 'arxiv.org/abs/2310.07980',
+  },
+  {
+    year: '2022',
+    authors: 'Pacza, T., Martins, M. L., Rockaya, M., Müller, K., Chatterjee, A., Barabási, A.-L., & Baranyi, J.',
+    title:
+      '(2022). MilkyBase, a database of human milk composition as a function of maternal-, infant- and measurement conditions.',
+    venue: 'Scientific Data, 9',
+    detail: ', 557.',
+    tag: 'Scientific Data',
+    tagVariant: 'venue',
+    href: 'https://doi.org/10.1038/s41597-022-01663-1',
+    linkLabel: 'doi.org/10.1038/s41597-022-01663-1',
+  },
+];
+
+const title = 'Publications — DiligenceBio';
+const description =
+  'Peer-reviewed work and preprints from our team on generalizability, negative sampling, and measurement in biological machine learning.';
+---
+
+<Base title={title} description={description}>
+  <div class="shell">
+    <SiteNav />
+    <main class="body">
+      <div class="intro">
+        <p class="crumb">
+          <span class="pulse" aria-hidden="true"></span>
+          <a href="/science">Our science</a>
+          <span class="slash" aria-hidden="true">/</span>
+          <span class="index">03</span>
+        </p>
+
+        <h1>Publications</h1>
+        <p class="lede">
+          Peer-reviewed work and preprints from our team on generalizability, negative sampling, and measurement in
+          biological machine learning.
+        </p>
+      </div>
+
+      <ul class="pub-list">
+        {
+          publications.map((pub) => (
+            <li class="pub">
+              <div class="pub-year">{pub.year}</div>
+              <div class="pub-body">
+                <p class="pub-citation">
+                  {pub.authors} {pub.title} <em>{pub.venue}</em>
+                  {pub.detail}
+                </p>
+                <div class="pub-meta">
+                  <span class:list={['tag', pub.tagVariant]}>{pub.tag}</span>
+                  <a href={pub.href} target="_blank" rel="noopener">
+                    {pub.linkLabel}
+                  </a>
+                </div>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+    </main>
+  </div>
+</Base>
+
+<style>
+  .shell {
+    height: 100dvh;
+    min-height: 460px;
+    display: flex;
+    flex-direction: column;
+    background: var(--color-bg);
+    color: var(--color-text);
+    overflow: hidden;
+  }
+
+  .body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow-y: auto;
+  }
+
+  .intro {
+    padding: 28px clamp(20px, 3.4vw, 44px) 20px;
+    flex: none;
+  }
+
+  .crumb {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 12px;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .crumb a {
+    color: var(--color-neutral-700);
+    text-decoration: none;
+  }
+
+  .crumb a:hover {
+    color: var(--color-accent);
+  }
+
+  .slash {
+    color: var(--color-neutral-500);
+  }
+
+  .index {
+    color: var(--color-accent);
+  }
+
+  .pulse {
+    width: 8px;
+    height: 8px;
+    flex: none;
+    background: var(--color-accent);
+    animation: bc-pulse 2.4s ease-in-out infinite;
+  }
+
+  h1 {
+    font-size: clamp(24px, 2.4vw, 34px);
+    line-height: 1.04;
+    letter-spacing: -0.025em;
+    margin: 0 0 8px;
+    max-width: 24ch;
+  }
+
+  .lede {
+    font-size: 15px;
+    line-height: 1.45;
+    color: var(--color-neutral-800);
+    max-width: 68ch;
+    margin: 0;
+  }
+
+  .pub-list {
+    list-style: none;
+    margin: 0;
+    padding: 0 clamp(20px, 3.4vw, 44px) 56px;
+    display: grid;
+    grid-template-columns: 5.5ch 1fr;
+    gap: 0 clamp(14px, 1.6vw, 28px);
+    border-top: 2px solid var(--color-divider);
+  }
+
+  .pub {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: subgrid;
+    padding: 22px 0 20px;
+    border-bottom: 1px solid var(--color-neutral-300);
+  }
+
+  .pub:last-child {
+    border-bottom: 0;
+  }
+
+  .pub-year {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: 13px;
+    line-height: 1.4;
+    letter-spacing: 0.02em;
+    color: var(--color-neutral-600);
+  }
+
+  .pub-body {
+    min-width: 0;
+  }
+
+  .pub-citation {
+    font-size: 15px;
+    line-height: 1.55;
+    margin: 0;
+    max-width: 92ch;
+    text-wrap: pretty;
+  }
+
+  .pub-meta {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    padding: 4px 8px;
+  }
+
+  .tag.preprint {
+    border: 1px solid var(--color-neutral-400);
+    color: var(--color-neutral-700);
+  }
+
+  .tag.venue {
+    background: var(--color-accent-100);
+    color: var(--color-accent-700);
+  }
+
+  .pub-meta a {
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    color: var(--color-neutral-700);
+    text-decoration: none;
+    border-bottom: 1px solid var(--color-neutral-400);
+  }
+
+  .pub-meta a:hover {
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+  }
+
+  /* A long list reads better flowing with the document than trapped in a
+     locked viewport — the same trade the index pages make at this width. */
+  @media (max-width: 720px) {
+    .shell {
+      height: auto;
+      min-height: 100svh;
+      overflow: visible;
+    }
+    .body {
+      overflow: visible;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pulse {
+      animation: none;
+    }
+  }
+</style>

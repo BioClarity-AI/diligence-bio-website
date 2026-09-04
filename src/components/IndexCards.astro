@@ -1,0 +1,121 @@
+---
+/**
+ * The card grid the Services and Science index pages are built from.
+ *
+ * Each card is one whole link — the number, the name, the blurb and the cue
+ * are all inside the <a>, so the entire tile is the target rather than just
+ * the words in it.
+ */
+export interface Card {
+  href: string;
+  /** Position label: '01'…'04'. */
+  index: string;
+  title: string;
+  blurb: string;
+  /** The call to action at the foot of the card. */
+  cta: string;
+}
+
+export interface Props {
+  cards: Card[];
+  /**
+   * Two rows instead of one. Services shows four cards as 2×2; Science shows
+   * three side by side.
+   */
+  rows?: 1 | 2;
+  /** Columns in the single row. Science shows three; Services shows two (as 2×2). */
+  cols?: 2 | 3;
+}
+
+const { cards, rows = 1, cols = 2 } = Astro.props;
+---
+
+<div
+  class:list={['quad', { two: rows === 2 }]}
+  style={`--card-count: ${cards.length}; --card-cols: ${cols}`}
+>
+  {
+    cards.map((card) => (
+      <a class="card" href={card.href}>
+        <span class="index">{card.index}</span>
+        <span class="card-title">{card.title}</span>
+        <span class="card-body">{card.blurb}</span>
+        <span class="card-cta">{card.cta} →</span>
+      </a>
+    ))
+  }
+</div>
+
+<style>
+  .quad {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(var(--card-cols, 2), 1fr);
+    grid-template-rows: minmax(160px, 1fr);
+    gap: 2px;
+    background: var(--color-divider);
+    border-top: 2px solid var(--color-divider);
+    min-height: 0;
+  }
+
+  .quad.two {
+    grid-template-rows: repeat(2, minmax(120px, 1fr));
+  }
+
+  .card {
+    background: var(--color-bg);
+    color: var(--color-text);
+    text-decoration: none;
+    display: grid;
+    grid-template-rows: auto auto 1fr auto;
+    gap: 10px;
+    padding: clamp(18px, 2.4vw, 36px);
+    min-width: 0;
+  }
+
+  .card:hover {
+    background: var(--color-accent);
+    color: var(--color-neutral-100);
+  }
+
+  .index {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: currentColor;
+    opacity: 0.55;
+  }
+
+  .card-title {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: clamp(22px, 2.4vw, 34px);
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+  }
+
+  .card-body {
+    font-size: 15px;
+    line-height: 1.45;
+    margin: 0;
+    max-width: 34ch;
+    opacity: 0.85;
+  }
+
+  .card-cta {
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-top: 4px;
+    opacity: 0.6;
+  }
+
+  /* One column once two no longer fit — the same 720px breakpoint the design
+     system uses for this grid shape. */
+  @media (max-width: 720px) {
+    .quad,
+    .quad.two {
+      grid-template-columns: 1fr;
+      grid-template-rows: repeat(var(--card-count, 4), minmax(160px, auto));
+    }
+  }
+</style>

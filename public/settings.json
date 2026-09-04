@@ -1,0 +1,44 @@
+{
+  "_readme": "Runtime settings for diligencebio.ai. Retune values here instead of editing source. Loaded by src/scripts/settings.ts on every page load; any key that is missing or malformed falls back to the default compiled into the consuming module, so a broken file here degrades gracefully rather than breaking the site. One section per drawn panel — \"emergence\" is the landing hero, the rest are named for their page — plus \"nav\" for the site header. Add new top-level sections as siblings of these.",
+  "_units": "Every *Seconds value is in seconds. Every \"speed\" is a multiplier on playback: 2 runs twice as fast, 0.5 half. Every \"mono\" drops the accent colour and draws in ink only.",
+  "nav": {
+    "_note": "Site header. hoverMenus opens the Services and Science menus of sub-pages on hover or keyboard focus. Off by default: each label already links to the index page that lists those sub-pages as cards, so nothing is unreachable without it. Off is also what you get with no JavaScript or an unreachable settings file.",
+    "hoverMenus": false
+  },
+  "emergence": {
+    "_note": "Landing hero: 340 particles easing between ten formations.",
+    "speed": 1.3,
+    "holdTime": 3.8,
+    "linkStrength": 1,
+    "mouseForce": 0.5,
+    "mono": false
+  },
+  "services": {
+    "_note": "Four scenes, one per service, cycling in this order. Each *Seconds is how long that scene holds before the panel advances.",
+    "speed": 1,
+    "mono": false,
+    "adoptionSeconds": 16.5,
+    "validationSeconds": 10.6,
+    "productsSeconds": 24,
+    "portfolioSeconds": 11.9
+  },
+  "science": {
+    "_note": "Two scenes: the measurement layer, then the generalizability frontier.",
+    "speed": 1,
+    "mono": false,
+    "platformSeconds": 14,
+    "generalizabilitySeconds": 15
+  },
+  "company": {
+    "_note": "One story on a loop: the same flaw caught at discovery and at Phase III. loopSeconds is how long one telling takes; the beats inside keep their relative timing.",
+    "speed": 1,
+    "mono": false,
+    "loopSeconds": 14.5
+  },
+  "requestAccess": {
+    "_note": "One email's journey through screening and into the inbox. loopSeconds is how long one journey takes.",
+    "speed": 1,
+    "mono": false,
+    "loopSeconds": 9
+  }
+}
