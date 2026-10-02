@@ -66,7 +66,6 @@ const links: NavItem[] = [
       ],
     },
   },
-  { href: '/company', label: 'Company' },
 ];
 
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
@@ -317,7 +316,7 @@ const isCurrent = (href: string) => path === href || path.startsWith(`${href}/`)
 
   /* Below this the nav becomes two rows — brand, then the links — rather than
      one crowded one. It must not drop the links instead: Services, Platform &
-     Science and Company are the site's content, and hiding them here strands a phone on
+     Science are the site's content, and hiding them here strands a phone on
      whichever page it landed on. */
   @media (max-width: 760px) {
     .nav-bar {

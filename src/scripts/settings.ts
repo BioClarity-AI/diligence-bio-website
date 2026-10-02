@@ -14,7 +14,6 @@
 import type { EmergenceOptions } from './emergence';
 import type { ServicesOptions } from './services';
 import type { ScienceOptions } from './science';
-import type { CompanyOptions } from './company';
 import type { RequestAccessOptions } from './requestAccess';
 import type { NavOptions } from './nav';
 
@@ -28,7 +27,6 @@ export interface Settings {
   emergence?: Partial<EmergenceOptions>;
   services?: Partial<ServicesOptions>;
   science?: Partial<ScienceOptions>;
-  company?: Partial<CompanyOptions>;
   requestAccess?: Partial<RequestAccessOptions>;
 }
 

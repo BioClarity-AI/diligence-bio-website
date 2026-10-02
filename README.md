@@ -55,7 +55,6 @@ src/
     emergence.ts     The hero particle simulation
     services.ts      Four service scenes
     science.ts       Two science scenes
-    company.ts       The cost of finding a flaw late
     requestAccess.ts One email's journey
     scrollForward.ts Sends a wheel or a drag over the stage to the copy column
     settings.ts      Best-effort fetch of public/settings.json
@@ -77,7 +76,6 @@ it, and it is `aria-hidden` — the copy carries every claim on its own.
 | `/` | The hero simulation: 340 particles through ten formations |
 | `/services` | Four scenes, one per service, cycling and hover-selectable |
 | `/science` | Two scenes: the measurement layer, and the generalizability frontier |
-| `/company` | Two programs carrying the same flaw, found early and found late |
 | `/request-access` | An email getting through screening, and being read |
 
 `/services` and `/science` accept deep links — `#svc-3`, `#sci-2` — which scroll
@@ -95,7 +93,6 @@ section per panel. Edit that file and reload — no rebuild, no deploy.
 | `emergence` | Landing hero | `speed`, `holdTime`, `linkStrength`, `mouseForce`, `mono` |
 | `services` | Services | `speed`, `mono`, `adoptionSeconds`, `validationSeconds`, `productsSeconds`, `portfolioSeconds` |
 | `science` | Science | `speed`, `mono`, `platformSeconds`, `generalizabilitySeconds` |
-| `company` | Company | `speed`, `mono`, `loopSeconds` |
 | `requestAccess` | Request access | `speed`, `mono`, `loopSeconds` |
 
 `speed` multiplies playback. A `*Seconds` key on a multi-scene panel is how

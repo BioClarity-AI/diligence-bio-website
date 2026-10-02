@@ -3,7 +3,7 @@
  * parent at device resolution, the design tokens resolved once, a small text
  * and line vocabulary, and a frame loop that stops when nobody is looking.
  *
- * The drawings themselves live in services.ts, science.ts, company.ts and
+ * The drawings themselves live in services.ts, science.ts and
  * requestAccess.ts. Nothing here knows what any of them depict.
  */
 

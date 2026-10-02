@@ -162,7 +162,7 @@
      one was forgotten. Each is paired in PageShell with a minimum width the
      copy may not go below — that floor is what keeps the columns honest at
      small sizes, so raise these with it in mind. */
-  --split-copy: 40%;           /* landing, company, request access */
+  --split-copy: 40%;           /* landing, request access */
   --split-copy-wide: 47%;      /* services and science: more copy to hold */
   --split-copy-landscape: 50%; /* a phone on its side, where width is tight */
 

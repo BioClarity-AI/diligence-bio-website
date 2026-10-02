@@ -29,12 +29,6 @@
     "platformSeconds": 14,
     "generalizabilitySeconds": 15
   },
-  "company": {
-    "_note": "One story on a loop: the same flaw caught at discovery and at Phase III. loopSeconds is how long one telling takes; the beats inside keep their relative timing.",
-    "speed": 1,
-    "mono": false,
-    "loopSeconds": 14.5
-  },
   "requestAccess": {
     "_note": "One email's journey through screening and into the inbox. loopSeconds is how long one journey takes.",
     "speed": 1,
