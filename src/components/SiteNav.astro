@@ -3,7 +3,7 @@
  * Site header. Links point at real routes only — a nav item that 404s costs
  * crawl budget and looks broken, so new items land here when their page does.
  *
- * Services and Platform & Science each carry a menu of the pages beneath them. These are
+ * Platforms and Science each carry a menu of the pages beneath them. These are
  * ordinary links: every topic is its own route now, so there is nothing to
  * select in place and nothing that needs JavaScript to navigate.
  */
@@ -21,47 +21,47 @@ interface NavItem {
 
 const links: NavItem[] = [
   {
-    href: '/services',
-    label: 'Services',
+    href: '/platforms',
+    label: 'Platforms',
     menu: {
       items: [
         {
-          href: '/services/adoption-strategy',
-          title: 'AI Adoption Strategy',
-          blurb: 'Identify where AI can create measurable value.',
+          href: '/platforms/biological-modeling',
+          title: 'Biological Modeling & Simulation',
+          blurb: 'Predict human biodistribution and kidney dose in silico.',
         },
         {
-          href: '/services/validation-benchmarking',
-          title: 'Validation & Benchmarking',
-          blurb: 'Prove what works for your science.',
+          href: '/platforms/molecular-design',
+          title: 'Molecular Design & Lead Optimization',
+          blurb: 'Linker and chelator architectures built for stability.',
         },
         {
-          href: '/services/ai-data-products',
-          title: 'AI & Data Products',
-          blurb: 'Build around your data, workflows, and portfolio.',
+          href: '/platforms/manufacturing-intelligence',
+          title: 'Manufacturing Intelligence (CMC)',
+          blurb: 'Predict batch purity and success at T=0.',
         },
         {
-          href: '/services/portfolio-intelligence',
-          title: 'Portfolio Intelligence',
-          blurb: 'Turn complex evidence into better R&D decisions.',
+          href: '/platforms/clinical-trial-intelligence',
+          title: 'Clinical Trial Intelligence',
+          blurb: 'Model dosing, safety, and response before protocols change.',
         },
       ],
     },
   },
   {
     href: '/science',
-    label: 'Platform & Science',
+    label: 'Science',
     menu: {
       items: [
         {
-          href: '/science/platform',
-          title: 'Platform',
-          blurb: 'One layer between model and decision.',
+          href: '/science/model-orchestrator',
+          title: 'Model Orchestrator',
+          blurb: 'One system from molecule to batch to patient.',
         },
         {
-          href: '/science/generalizability',
-          title: 'Generalizability Measurements',
-          blurb: 'Assess whether frontier models learned the biology you need.',
+          href: '/science/linker-chelator-design',
+          title: 'Linker & Chelator Design',
+          blurb: 'Stable in the bloodstream, precise at the tumor.',
         },
       ],
     },
@@ -71,7 +71,7 @@ const links: NavItem[] = [
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 
 // A nav item's own page, or one of its real sub-pages (e.g. Science's
-// /science/platform) — not a hash anchor, which never changes the pathname.
+// /science/model-orchestrator) — not a hash anchor, which never changes the pathname.
 const isCurrent = (href: string) => path === href || path.startsWith(`${href}/`);
 ---
 
@@ -79,7 +79,7 @@ const isCurrent = (href: string) => path === href || path.startsWith(`${href}/`)
   <a class="brand" href="/">
     <img class="brand-logo" src="/images/icon.svg" alt="" width="24" height="24" />
     <span class="brand-name">DiligenceBio</span>
-    <span class="brand-tag" data-brand-tag>Vendor Agnostic AI</span>
+    <span class="brand-tag" data-brand-tag>Radioconjugate Discovery</span>
   </a>
 
   <nav class="nav-links" aria-label="Primary">
@@ -106,7 +106,7 @@ const isCurrent = (href: string) => path === href || path.startsWith(`${href}/`)
         ),
       )
     }
-    <a class="btn btn-primary nav-cta" href="/request-access">Request access</a>
+    <a class="btn btn-primary nav-cta" href="/partner-with-us">Partner with us</a>
     <span class="nav-break" aria-hidden="true"></span>
   </nav>
 </header>
@@ -315,7 +315,7 @@ const isCurrent = (href: string) => path === href || path.startsWith(`${href}/`)
   }
 
   /* Below this the nav becomes two rows — brand, then the links — rather than
-     one crowded one. It must not drop the links instead: Services, Platform &
+     one crowded one. It must not drop the links instead: Platforms and
      Science are the site's content, and hiding them here strands a phone on
      whichever page it landed on. */
   @media (max-width: 760px) {

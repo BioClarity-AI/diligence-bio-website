@@ -1,0 +1,49 @@
+---
+import DetailPage from '../../layouts/DetailPage.astro';
+import SceneStage from '../../components/SceneStage.astro';
+
+const next = { href: '/science/linker-chelator-design', label: 'Linker & Chelator Design' };
+---
+
+<DetailPage
+  title="Model Orchestrator — DiligenceBio"
+  description="One system from molecule to batch to patient. Molecular design, biological simulation, and manufacturing models run as one agentic system, with lab results feeding back into the models."
+  parent={{ href: '/science', label: 'Our science' }}
+  index="01"
+  heading="Model Orchestrator"
+  claim="One system from molecule to batch to patient."
+  next={next}
+>
+  <p>
+    Promising therapies fail late because toxicity, pharmacokinetics, and manufacturability are
+    evaluated in isolation.
+  </p>
+  <p>
+    Our Computational Model Orchestrator runs molecular design, biological simulation, and
+    manufacturing models as one agentic system. A change to a linker is scored for stability,
+    biodistribution, dosimetry, and batch yield at once, and experimental results from the lab
+    feed back into the models, so trade-offs surface in silico rather than in the clinic.
+  </p>
+
+  <Fragment slot="stage">
+    <SceneStage
+      kicker="Our science — live"
+      title="MODEL ORCHESTRATOR"
+      next={next}
+    />
+  </Fragment>
+</DetailPage>
+
+<script>
+  import { initSceneStage } from '../../scripts/sceneStage';
+  import { platformScene, SCIENCE_LAYOUT } from '../../scripts/science';
+  import { loadSettings } from '../../scripts/settings';
+
+  const stage = document.querySelector<HTMLElement>('[data-page-stage]');
+  if (stage) {
+    const panel = initSceneStage(stage, { scene: platformScene(), ...SCIENCE_LAYOUT });
+    loadSettings().then(({ science }) => {
+      if (science) panel.update({ speed: science.speed, mono: science.mono });
+    });
+  }
+</script>

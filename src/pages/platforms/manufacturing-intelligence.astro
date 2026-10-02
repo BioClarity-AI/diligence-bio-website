@@ -1,0 +1,56 @@
+---
+import DetailPage from '../../layouts/DetailPage.astro';
+import SceneStage from '../../components/SceneStage.astro';
+import { productsChoice } from '../../scripts/services';
+
+const prev = { href: '/platforms/molecular-design', label: 'Molecular Design & Lead Optimization' };
+const next = { href: '/platforms/clinical-trial-intelligence', label: 'Clinical Trial Intelligence' };
+
+// This is the one platform whose scene has competing builds, so the stage
+// offers a letter per concept. Read off the scene itself rather than restated
+// here, so the buttons cannot drift from what they switch between — including
+// which one leads, which is simply the first entry.
+const variants = productsChoice().variants.map(({ id, label, title }) => ({ id, label, title }));
+---
+
+<DetailPage
+  title="Manufacturing Intelligence (CMC) — DiligenceBio"
+  description="Know whether a batch will succeed at the moment it is produced. Batch purity and success predicted at T=0, with 90% accuracy on T=7 stability."
+  parent={{ href: '/platforms', label: 'Platforms' }}
+  index="03"
+  heading="Manufacturing Intelligence (CMC)"
+  claim="Know whether a batch will succeed at the moment it is produced."
+  prev={prev}
+  next={next}
+>
+  <p>Radioconjugates decay on a clock, so a failed batch is a missed dose.</p>
+  <p>
+    We monitor microscopic pH fluctuations and trace impurities at T=0 to predict batch purity
+    and success at production, with 90% accuracy on T=7 stability. The same models normalize
+    quality across radioisotopes, de-risking the supply chain from production to delivery.
+  </p>
+
+  <Fragment slot="stage">
+    <SceneStage
+      kicker="Platform 03 — live"
+      title="MANUFACTURING INTELLIGENCE"
+      prev={prev}
+      next={next}
+      variants={variants}
+    />
+  </Fragment>
+</DetailPage>
+
+<script>
+  import { initSceneStage } from '../../scripts/sceneStage';
+  import { productsChoice, SERVICES_LAYOUT } from '../../scripts/services';
+  import { loadSettings } from '../../scripts/settings';
+
+  const stage = document.querySelector<HTMLElement>('[data-page-stage]');
+  if (stage) {
+    const panel = initSceneStage(stage, { scene: productsChoice(), ...SERVICES_LAYOUT });
+    loadSettings().then(({ services }) => {
+      if (services) panel.update({ speed: services.speed, mono: services.mono });
+    });
+  }
+</script>

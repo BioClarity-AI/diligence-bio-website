@@ -1,0 +1,49 @@
+---
+import DetailPage from '../../layouts/DetailPage.astro';
+import SceneStage from '../../components/SceneStage.astro';
+
+const prev = { href: '/platforms/clinical-trial-intelligence', label: 'Clinical Trial Intelligence' };
+const next = { href: '/platforms/molecular-design', label: 'Molecular Design & Lead Optimization' };
+---
+
+<DetailPage
+  title="Biological Modeling & Simulation — DiligenceBio"
+  description="Predict human biodistribution and kidney dose before a candidate is committed. Human kidney digital twins and more than 1,000 in silico radiation scenarios per candidate."
+  parent={{ href: '/platforms', label: 'Platforms' }}
+  index="01"
+  heading="Biological Modeling & Simulation"
+  claim="Predict human biodistribution and kidney dose before a candidate is committed."
+  prev={prev}
+  next={next}
+>
+  <p>Kidney toxicity is the bottleneck for most radioligand therapies.</p>
+  <p>
+    Animal models routinely misjudge how a radioconjugate distributes in people. We build human
+    kidney digital twins informed by organ-on-a-chip data, then simulate more than 1,000
+    radiation scenarios per candidate in silico to predict clinical biodistribution, dosimetry,
+    and off-target risk.
+  </p>
+
+  <Fragment slot="stage">
+    <SceneStage
+      kicker="Platform 01 — live"
+      title="BIOLOGICAL MODELING"
+      prev={prev}
+      next={next}
+    />
+  </Fragment>
+</DetailPage>
+
+<script>
+  import { initSceneStage } from '../../scripts/sceneStage';
+  import { adoptionScene, SERVICES_LAYOUT } from '../../scripts/services';
+  import { loadSettings } from '../../scripts/settings';
+
+  const stage = document.querySelector<HTMLElement>('[data-page-stage]');
+  if (stage) {
+    const panel = initSceneStage(stage, { scene: adoptionScene(), ...SERVICES_LAYOUT });
+    loadSettings().then(({ services }) => {
+      if (services) panel.update({ speed: services.speed, mono: services.mono });
+    });
+  }
+</script>

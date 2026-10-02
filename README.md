@@ -74,11 +74,11 @@ it, and it is `aria-hidden` — the copy carries every claim on its own.
 | Route | Stage |
 | --- | --- |
 | `/` | The hero simulation: 340 particles through ten formations |
-| `/services` | Four scenes, one per service, cycling and hover-selectable |
+| `/platforms` | Four scenes, one per platform, cycling and hover-selectable |
 | `/science` | Two scenes: the measurement layer, and the generalizability frontier |
-| `/request-access` | An email getting through screening, and being read |
+| `/partner-with-us` | An email getting through screening, and being read |
 
-`/services` and `/science` accept deep links — `#svc-3`, `#sci-2` — which scroll
+`/platforms` and `/science` accept deep links — `#svc-3`, `#sci-2` — which scroll
 the section into view and switch the stage to match. The nav menus use the same
 hooks: from another page they are ordinary links, and on the page itself the
 click is handed to the running panel instead of reloading.
@@ -123,7 +123,7 @@ A slot in that list can be a `SceneChoice` instead of a `Scene`: several
 `variants`, each a whole concept for the same section. The panel draws the
 picked one and adds lettered buttons to the stage overlay while that slot is on
 screen, so the concepts can be compared in place rather than in a branch. The
-services page uses this for `AI & Data Products` — `A` fabrication, `C` a kit of
+platforms page uses this for `Manufacturing Intelligence (CMC)` — `A` fabrication, `C` a kit of
 parts. Adding a concept is one more entry in `variants`.
 
 The pick is a runtime affordance, not a setting: it resets to the first variant

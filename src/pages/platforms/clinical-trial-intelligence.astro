@@ -1,0 +1,48 @@
+---
+import DetailPage from '../../layouts/DetailPage.astro';
+import SceneStage from '../../components/SceneStage.astro';
+
+const prev = { href: '/platforms/manufacturing-intelligence', label: 'Manufacturing Intelligence (CMC)' };
+const next = { href: '/platforms/biological-modeling', label: 'Biological Modeling & Simulation' };
+---
+
+<DetailPage
+  title="Clinical Trial Intelligence — DiligenceBio"
+  description="Model the trial before you have to amend it. Real-time monitoring and outcome prediction for radioligand programs."
+  parent={{ href: '/platforms', label: 'Platforms' }}
+  index="04"
+  heading="Clinical Trial Intelligence"
+  claim="Model the trial before you have to amend it."
+  prev={prev}
+  next={next}
+>
+  <p>Real-time monitoring and outcome prediction for radioligand programs.</p>
+  <p>
+    We model patient response, dosing, and safety signals so protocols can adapt before they
+    need amending. Projected impact: 40% fewer protocol amendments and 85% accuracy in outcome
+    forecasting.
+  </p>
+
+  <Fragment slot="stage">
+    <SceneStage
+      kicker="Platform 04 — live"
+      title="CLINICAL TRIAL INTELLIGENCE"
+      prev={prev}
+      next={next}
+    />
+  </Fragment>
+</DetailPage>
+
+<script>
+  import { initSceneStage } from '../../scripts/sceneStage';
+  import { portfolioScene, SERVICES_LAYOUT } from '../../scripts/services';
+  import { loadSettings } from '../../scripts/settings';
+
+  const stage = document.querySelector<HTMLElement>('[data-page-stage]');
+  if (stage) {
+    const panel = initSceneStage(stage, { scene: portfolioScene(), ...SERVICES_LAYOUT });
+    loadSettings().then(({ services }) => {
+      if (services) panel.update({ speed: services.speed, mono: services.mono });
+    });
+  }
+</script>

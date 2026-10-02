@@ -1,0 +1,45 @@
+---
+import IndexPage from '../layouts/IndexPage.astro';
+import type { Card } from '../components/IndexCards.astro';
+
+const cards: Card[] = [
+  {
+    href: '/platforms/biological-modeling',
+    index: '01',
+    title: 'Biological Modeling & Simulation',
+    blurb: 'Predict human biodistribution and kidney dose in silico.',
+    cta: 'See the platform',
+  },
+  {
+    href: '/platforms/molecular-design',
+    index: '02',
+    title: 'Molecular Design & Lead Optimization',
+    blurb: 'Linker and chelator architectures with R² = 0.96 stability forecasts.',
+    cta: 'See the platform',
+  },
+  {
+    href: '/platforms/manufacturing-intelligence',
+    index: '03',
+    title: 'Manufacturing Intelligence (CMC)',
+    blurb: 'Predict batch purity and success at T=0.',
+    cta: 'See the platform',
+  },
+  {
+    href: '/platforms/clinical-trial-intelligence',
+    index: '04',
+    title: 'Clinical Trial Intelligence',
+    blurb: 'Model dosing, safety, and response before protocols change.',
+    cta: 'See the platform',
+  },
+];
+---
+
+<IndexPage
+  title="Platforms — DiligenceBio"
+  description="Four computational platforms for each place a radioconjugate can fail: biological modeling and simulation, molecular design and lead optimization, manufacturing intelligence, and clinical trial intelligence."
+  eyebrow="The DiligenceBio engine"
+  heading="Four Platforms, One Radioconjugate"
+  lede="Computational models for each place a radioconjugate can fail: in the body, in the molecule, in the batch, and in the trial."
+  cards={cards}
+  rows={2}
+/>

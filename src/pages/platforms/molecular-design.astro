@@ -1,0 +1,49 @@
+---
+import DetailPage from '../../layouts/DetailPage.astro';
+import SceneStage from '../../components/SceneStage.astro';
+
+const prev = { href: '/platforms/biological-modeling', label: 'Biological Modeling & Simulation' };
+const next = { href: '/platforms/manufacturing-intelligence', label: 'Manufacturing Intelligence (CMC)' };
+---
+
+<DetailPage
+  title="Molecular Design & Lead Optimization — DiligenceBio"
+  description="Keep the isotope locked to its vector until it reaches the tumor. Physics-informed linker and chelator design with R² = 0.96 stability forecasts."
+  parent={{ href: '/platforms', label: 'Platforms' }}
+  index="02"
+  heading="Molecular Design & Lead Optimization"
+  claim="Keep the isotope locked to its vector until it reaches the tumor."
+  prev={prev}
+  next={next}
+>
+  <p>Stable in the bloodstream, precise at the tumor.</p>
+  <p>
+    Our physics-informed architecture combines machine learning with radioactive decay kinetics
+    to find the bond between ligand and isotope that holds in circulation and releases at the
+    target. Stability forecasts reach R² = 0.96 across linker and chelator architectures,
+    designed around the short half-life of therapeutic isotopes.
+  </p>
+
+  <Fragment slot="stage">
+    <SceneStage
+      kicker="Platform 02 — live"
+      title="MOLECULAR DESIGN"
+      prev={prev}
+      next={next}
+    />
+  </Fragment>
+</DetailPage>
+
+<script>
+  import { initSceneStage } from '../../scripts/sceneStage';
+  import { validationScene, SERVICES_LAYOUT } from '../../scripts/services';
+  import { loadSettings } from '../../scripts/settings';
+
+  const stage = document.querySelector<HTMLElement>('[data-page-stage]');
+  if (stage) {
+    const panel = initSceneStage(stage, { scene: validationScene(), ...SERVICES_LAYOUT });
+    loadSettings().then(({ services }) => {
+      if (services) panel.update({ speed: services.speed, mono: services.mono });
+    });
+  }
+</script>

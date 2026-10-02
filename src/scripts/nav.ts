@@ -8,7 +8,7 @@
 
 export interface NavOptions {
   /**
-   * Whether the Services and Platform & Science labels open their menu of sub-pages on
+   * Whether the Platforms and Science labels open their menu of sub-pages on
    * hover or keyboard focus.
    *
    * Off by default, and the CSS is written so that "on" has to be switched on

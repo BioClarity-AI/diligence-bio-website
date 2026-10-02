@@ -1,0 +1,50 @@
+---
+import DetailPage from '../../layouts/DetailPage.astro';
+import SceneStage from '../../components/SceneStage.astro';
+
+const prev = { href: '/science/model-orchestrator', label: 'Model Orchestrator' };
+---
+
+<DetailPage
+  title="Linker & Chelator Design — DiligenceBio"
+  description="Stable in the bloodstream, precise at the tumor. Proprietary linker and chelator IP for isotope binding, circulation stability, and release at the tumor."
+  parent={{ href: '/science', label: 'Our science' }}
+  index="02"
+  heading="Linker & Chelator Design"
+  claim="Stable in the bloodstream, precise at the tumor."
+  prev={prev}
+>
+  <p>We are translating our AI expertise into proprietary linker and chelator IP.</p>
+  <p>
+    Linker models predict plasma stability, activation in the tumor microenvironment, and
+    payload release, and assess manufacturing scalability before synthesis. Chelator designs
+    target multi-isotope compatibility, faster binding kinetics, reduced immunogenicity, and
+    simpler synthesis routes.
+  </p>
+  <p>
+    Both are optimized for the short half-life of therapeutic isotopes. AI-optimized chelator
+    design is projected to raise radiolabeling yields by 35%.
+  </p>
+
+  <Fragment slot="stage">
+    <SceneStage
+      kicker="Our science — live"
+      title="LINKER & CHELATOR"
+      prev={prev}
+    />
+  </Fragment>
+</DetailPage>
+
+<script>
+  import { initSceneStage } from '../../scripts/sceneStage';
+  import { frontierScene, SCIENCE_LAYOUT } from '../../scripts/science';
+  import { loadSettings } from '../../scripts/settings';
+
+  const stage = document.querySelector<HTMLElement>('[data-page-stage]');
+  if (stage) {
+    const panel = initSceneStage(stage, { scene: frontierScene(), ...SCIENCE_LAYOUT });
+    loadSettings().then(({ science }) => {
+      if (science) panel.update({ speed: science.speed, mono: science.mono });
+    });
+  }
+</script>
