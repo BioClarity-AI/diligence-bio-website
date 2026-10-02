@@ -1,31 +1,47 @@
 ---
 import PageShell from '../layouts/PageShell.astro';
-import Emergence from '../components/Emergence.astro';
 
-const title = 'DiligenceBio — turn AI adoption into scientific value';
+const title = 'DiligenceBio — Precision Oncology, Orchestrated';
 const description =
-  'DiligenceBio gives pharma and biotech leaders a vendor-agnostic way to identify where AI can create real impact, validate it against their own data and workflows, and tailor proven capabilities to their portfolio.';
+  'DiligenceBio couples AI with experimental feedback to resolve the structural and manufacturing complexity of radioconjugates, from linker and chelator design to biodistribution, dosimetry, toxicity, and batch release.';
 ---
 
 <PageShell title={title} description={description}>
   <Fragment slot="copy">
     <p class="eyebrow">
       <span class="pulse" aria-hidden="true"></span>
-      Trust Layer for Agentic Science
+      AI-in-lab-loop radioconjugate discovery
     </p>
 
-    <h1>Turn AI Adoption Into Scientific Value</h1>
+    <h1>Precision Oncology, Orchestrated</h1>
 
     <p class="lede">
-      AI is moving faster than most R&D organizations can confidently adopt it. DiligenceBio
-      gives pharma and biotech leaders a vendor-agnostic way to identify where AI can create
-      real impact, validate it against their own data and workflows, and tailor proven
-      capabilities to their portfolio—so AI investment is grounded in evidence, not hype.
+      DiligenceBio replaces trial-and-error with computational certainty. Our Computational Model
+      Orchestrator couples AI with experimental feedback to resolve the structural and
+      manufacturing complexity of radioconjugates, from linker and chelator design to
+      biodistribution, dosimetry, toxicity, and batch release.
     </p>
+
+    <div class="actions">
+      <a class="btn btn-primary" href="/request-access">Partner with us →</a>
+      <a class="btn btn-secondary" href="/services">See the platforms</a>
+    </div>
   </Fragment>
 
   <Fragment slot="stage">
-    <Emergence />
+    <figure class="figure">
+      <img
+        src="/images/Radioonjugate2.png"
+        width="1024"
+        height="1024"
+        alt="A radioconjugate: chelated isotope, linker and targeting vector binding a receptor on a tumor cell"
+      />
+      <p class="kicker">Radioconjugate — anatomy</p>
+      <figcaption>
+        <span>One molecule, three design problems: hold the isotope, survive circulation, find the tumor.</span>
+        <span class="parts">Chelator · Linker · Vector</span>
+      </figcaption>
+    </figure>
   </Fragment>
 </PageShell>
 
@@ -63,6 +79,71 @@ const description =
     color: var(--color-neutral-800);
     max-width: 46ch;
     margin: 0;
+  }
+
+  .actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 32px;
+  }
+
+  .actions .btn {
+    padding: 14px 20px;
+    font-size: 15px;
+    white-space: nowrap;
+  }
+
+  /* The figure fills the stage panel; the kicker and caption sit on top of it
+     as opaque labels so they stay legible over any part of the artwork. */
+  .figure {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    background: var(--color-neutral-100);
+  }
+
+  .figure img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 35% 50%;
+    display: block;
+  }
+
+  .kicker {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    margin: 0;
+    padding: 6px 10px;
+    background: var(--color-bg);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-text);
+  }
+
+  figcaption {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px 24px;
+    padding: 14px 20px;
+    background: var(--color-bg);
+    border-top: 2px solid var(--color-divider);
+    font-size: 13px;
+    line-height: 1.4;
+    color: var(--color-text);
+  }
+
+  .parts {
+    color: var(--color-neutral-700);
   }
 
   @media (prefers-reduced-motion: reduce) {
